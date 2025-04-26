@@ -94,7 +94,7 @@ class accountLogin(Database): # inherit methods from Database class
                  text = "New Account Number (Must be 16 digits long):",
                  font = ("Arial", 20)).pack()
         
-        self.newNameEntry = tk.Entry(self.createAccountWindow,
+        self.newAccountNummber = tk.Entry(self.createAccountWindow,
                                      width = 20,
                                      font = ("Arial", 12)).pack()
         # new password
@@ -102,7 +102,7 @@ class accountLogin(Database): # inherit methods from Database class
                  text = "New password:",
                  font = ("Arial", 20)).pack()
         
-        self.newNameEntry = tk.Entry(self.createAccountWindow,
+        self.newPassword = tk.Entry(self.createAccountWindow,
                                      width = 20,
                                      font = ("Arial", 12),
                                      show = "*").pack()
@@ -111,7 +111,7 @@ class accountLogin(Database): # inherit methods from Database class
                  text = "Confirm new password:",
                  font = ("Arial", 20)).pack()
         
-        self.newNameEntry = tk.Entry(self.createAccountWindow,
+        self.newPasswordConfirm = tk.Entry(self.createAccountWindow,
                                      width = 20,
                                      font = ("Arial", 12),
                                      show = "*").pack()
