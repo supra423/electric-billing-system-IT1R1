@@ -5,14 +5,24 @@ from databaseTables import Database
 from windowMain import mainMenu
 
 
-class createAccount: # defined this class first so that accountLogin class can inherit from this class
+class createAccount(Database): # defined this class first so that 
+                               # accountLogin class can inherit from this class
+                               # this class also inherits the Database class to
+                               # insert new accounts into the database
 
     def insertNewAccount(self):
-       self.newName = self.newNameEntry.get()
-       self.newAccountNumber = self.newAccountNumberEntry.get()
-       self.newHomeAddress = self.newHomeAddressEntry.get()
-       self.newPassword = self.newPasswordEntry.get()
-       self.newPasswordConfirm = self.newPasswordConfirmEntry.get()
+
+        try:
+            newName = self.newNameEntry.get()
+            newAccountNumber = self.newAccountNumberEntry.get()
+            newHomeAddress = self.newHomeAddressEntry.get()
+            newPassword = self.newPasswordEntry.get()
+            newPasswordConfirm = self.newPasswordConfirmEntry.get()
+        except Exception:
+            messagebox.showinfo("Error!", "Please don't leave any entries blank!")
+
+        
+
 
     def __init__(self):
 
@@ -71,7 +81,8 @@ class createAccount: # defined this class first so that accountLogin class can i
                 height = 2, 
                 command = self.insertNewAccount).pack(side="right", padx=20)
 
-class accountLogin(Database, createAccount): # inherit methods from Database class and createAccount class
+class accountLogin(Database, createAccount): # inherit methods from Database class for logging in to accounts
+                                             # and createAccount class to open a create account window
     def createAccountMenu(self):
         window = createAccount()
 
