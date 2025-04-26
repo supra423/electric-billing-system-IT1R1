@@ -5,21 +5,25 @@ from databaseTables import Database
 from windowMain import mainMenu
 
 
-class createAccount:
+class createAccount: # defined this class first so that accountLogin class can inherit from this class
 
-    def insertNewAccount():
-        pass
+    def insertNewAccount(self):
+       self.newName = self.newNameEntry.get()
+       self.newAccountNumber = self.newAccountNumberEntry.get()
+       self.newHomeAddress = self.newHomeAddressEntry.get()
+       self.newPassword = self.newPasswordEntry.get()
+       self.newPasswordConfirm = self.newPasswordConfirmEntry.get()
 
     def __init__(self):
 
         self.createAccountWindow = tk.Tk()
         self.createAccountWindow.title("Create an account")
-        self.createAccountWindow.geometry("400x350")
+        self.createAccountWindow.geometry("400x400")
         self.createAccountWindow.resizable(False, False)
         
         # new name
         tk.Label(self.createAccountWindow,
-                 text = "New name:",
+                 text = "Enter name:",
                  font = ("Arial", 20)).pack()
         
         self.newNameEntry = tk.Entry(self.createAccountWindow,
@@ -27,18 +31,28 @@ class createAccount:
                                      font = ("Arial", 12)).pack()
         # new accout number
         tk.Label(self.createAccountWindow,
-                 text = "New Account Number\n(Must be 16 digits long):",
+                 text = "Enter new Account Number\n(Must be 16 digits long):",
                  font = ("Arial", 20)).pack()
         
-        self.newAccountNummber = tk.Entry(self.createAccountWindow,
+        self.newAccountNumberEntry = tk.Entry(self.createAccountWindow,
                                      width = 20,
                                      font = ("Arial", 12)).pack()
-        # new password
+        
+        # home address
         tk.Label(self.createAccountWindow,
-                 text = "New password:",
+                 text = "Home address:",
                  font = ("Arial", 20)).pack()
         
-        self.newPassword = tk.Entry(self.createAccountWindow,
+        self.newHomeAddressEntry = tk.Entry(self.createAccountWindow,
+                                     width = 20,
+                                     font = ("Arial", 12)).pack()
+       
+        # new password
+        tk.Label(self.createAccountWindow,
+                 text = "Enter new password:",
+                 font = ("Arial", 20)).pack()
+        
+        self.newPasswordEntry = tk.Entry(self.createAccountWindow,
                                      width = 20,
                                      font = ("Arial", 12),
                                      show = "*").pack()
@@ -47,17 +61,17 @@ class createAccount:
                  text = "Confirm new password:",
                  font = ("Arial", 20)).pack()
         
-        self.newPasswordConfirm = tk.Entry(self.createAccountWindow,
+        self.newPasswordConfirmEntry = tk.Entry(self.createAccountWindow,
                                      width = 20,
                                      font = ("Arial", 12),
                                      show = "*").pack()
         tk.Button(self.createAccountWindow, 
-                text = "Create \nnew account?", 
+                text = "Create \nnew account", 
                 width = 15, 
                 height = 2, 
-                command = self.insertNewAccount).pack(side="left", padx=20)
+                command = self.insertNewAccount).pack(side="right", padx=20)
 
-class accountLogin(Database, createAccount): # inherit methods from Database class and create account
+class accountLogin(Database, createAccount): # inherit methods from Database class and createAccount class
     def createAccountMenu(self):
         window = createAccount()
 
@@ -109,10 +123,10 @@ class accountLogin(Database, createAccount): # inherit methods from Database cla
                 text = "Login", 
                 width = 15, 
                 height = 2, 
-                command = self.login).pack(side="left", padx=20)
+                command = self.login).pack(side="right", padx=20)
 
         tk.Button(self.loginWindow, 
-                text = "Create \nnew account", 
+                text = "Create \nnew account?", 
                 width = 15, 
                 height = 2, 
                 command = self.createAccountMenu).pack(side="left", padx=20)
