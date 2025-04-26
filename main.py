@@ -5,7 +5,7 @@ from databaseTables import Database
 from windowMain import mainMenu
 
 
-class accountLogin:
+class accountLogin(Database): # inherit methods from Database class
     def __init__(self):
         self.loginWindow = tk.Tk()
         self.loginWindow.title("Login")
