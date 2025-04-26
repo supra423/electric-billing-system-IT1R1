@@ -52,9 +52,15 @@ class accountLogin(Database): # inherit methods from Database class
 
         tk.Button(self.loginWindow, 
                 text = "Login", 
-                width = 10, 
+                width = 15, 
                 height = 2, 
                 command = self.login).pack(side="right", padx=20)
+
+        tk.Button(self.loginWindow, 
+                text = "Create \nnew account?", 
+                width = 15, 
+                height = 2, 
+                command = self.login).pack(side="left", padx=20)
 
         self.loginWindow.mainloop()
 
@@ -67,6 +73,8 @@ class accountLogin(Database): # inherit methods from Database class
             self.loginWindow.destroy()
             mainMenu()
 
+    def createAccount(self):
+        pass
 if __name__ == "__main__":
     accountLogin()
     Database()
