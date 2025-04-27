@@ -9,9 +9,32 @@ class createAccount(Database): # defined this class first so that
                                # accountLogin class can inherit from this class
                                # this class also inherits the Database class to
                                # insert new accounts into the database
+    def __init__(self):
+
+        self.createAccountWindow = tk.Tk()
+        self.createAccountWindow.title("Create an account")
+        self.createAccountWindow.geometry("400x400")
+        self.createAccountWindow.resizable(False, False)
+
+        # new name
+        self.labelAndEntryCreateAccount("Enter name:", 20)
+        # new account number
+        self.labelAndEntryCreateAccount("Enter new account number\n(Must be 16 digits long):", 12)
+        # home address
+        self.labelAndEntryCreateAccount("Enter home address:", 20)
+        # new password 
+        self.labelAndEntryCreateAccount("Enter new password:", 20)
+        # confirm new password
+        self.labelAndEntryCreateAccount("Confirm new password:", 20)
+
+        tk.Button(self.createAccountWindow, 
+                text = "Create \nnew account", 
+                width = 15, 
+                height = 2, 
+                command = self.insertNewAccount).pack(side="right", padx=20)
+
 
     def insertNewAccount(self):
-
         try:
             newName = self.newNameEntry.get()
             newAccountNumber = self.newAccountNumberEntry.get()
@@ -19,77 +42,31 @@ class createAccount(Database): # defined this class first so that
             newPassword = self.newPasswordEntry.get()
             newPasswordConfirm = self.newPasswordConfirmEntry.get()
             
-            if newPassword == newPasswordConfirm 
+            if newPassword == newPasswordConfirm: 
                 self.cursor.execute("insert into accounts(name, accountNumber, address, password) ") 
 
 
         except Exception:
-            messagebox.showinfo("Error!", "Please don't leave any entries blank!")
+            messagebox.showinfo("Error!", "Please don't leave any entries blank!")        
 
-        
-
-    def __init__(self):
-
-        self.createAccountWindow = tk.Tk()
-        self.createAccountWindow.title("Create an account")
-        self.createAccountWindow.geometry("400x400")
-        self.createAccountWindow.resizable(False, False)
-        
-        # new name
+    
+    def labelAndEntryCreateAccount(self, labelText, fontSize):
+        '''
+        just a helper function to reduce the amount of lines
+        input the text of the label and then the size of the text
+        '''
         tk.Label(self.createAccountWindow,
-                 text = "Enter name:",
-                 font = ("Arial", 20)).pack()
+                 text = labelText,
+                 font = ("Arial", fontSize)).pack()
         
         self.newNameEntry = tk.Entry(self.createAccountWindow,
                                      width = 20,
                                      font = ("Arial", 12)).pack()
-        # new accout number
-        tk.Label(self.createAccountWindow,
-                 text = "Enter new Account Number\n(Must be 16 digits long):",
-                 font = ("Arial", 20)).pack()
-        
-        self.newAccountNumberEntry = tk.Entry(self.createAccountWindow,
-                                     width = 20,
-                                     font = ("Arial", 12)).pack()
-        
-        # home address
-        tk.Label(self.createAccountWindow,
-                 text = "Home address:",
-                 font = ("Arial", 20)).pack()
-        
-        self.newHomeAddressEntry = tk.Entry(self.createAccountWindow,
-                                     width = 20,
-                                     font = ("Arial", 12)).pack()
-       
-        # new password
-        tk.Label(self.createAccountWindow,
-                 text = "Enter new password:",
-                 font = ("Arial", 20)).pack()
-        
-        self.newPasswordEntry = tk.Entry(self.createAccountWindow,
-                                     width = 20,
-                                     font = ("Arial", 12),
-                                     show = "*").pack()
-        # confirm new password
-        tk.Label(self.createAccountWindow,
-                 text = "Confirm new password:",
-                 font = ("Arial", 20)).pack()
-        
-        self.newPasswordConfirmEntry = tk.Entry(self.createAccountWindow,
-                                     width = 20,
-                                     font = ("Arial", 12),
-                                     show = "*").pack()
-        tk.Button(self.createAccountWindow, 
-                text = "Create \nnew account", 
-                width = 15, 
-                height = 2, 
-                command = self.insertNewAccount).pack(side="right", padx=20)
+
+
 
 class accountLogin(createAccount, Database): # inherit methods from Database class for logging in to accounts
                                              # and createAccount class to open a create account window
-    def createAccountMenu(self):
-        window = createAccount()
-
     def __init__(self):
         self.loginWindow = tk.Tk()
         self.loginWindow.title("Login")
@@ -102,37 +79,11 @@ class accountLogin(createAccount, Database): # inherit methods from Database cla
                 height = 3, 
                 font = ("Arial", 30)).pack()
 
-        tk.Label(self.loginWindow, 
-                text = "Name", 
-                width = 10, 
-                height = 1, 
-                font = ("Arial", 20)).pack()
+        self.labelAndEntryAccountLogin("Enter Name:", 20)
 
-        self.nameEntry = tk.Entry(self.loginWindow, 
-                            width = 20, 
-                            font = ("Arial", 12))
-        self.nameEntry.pack()
-
-        tk.Label(self.loginWindow,
-                text = "Account Number",
-                width = 15, 
-                height = 1, 
-                font = ("Arial", 20)).pack()
-        self.accountEntry = tk.Entry(self.loginWindow, 
-                                width = 20, 
-                                font = ("Arial", 12))
-        self.accountEntry.pack()
-
-        tk.Label(self.loginWindow, 
-                text = "Password", 
-                width = 10, 
-                height = 1, 
-                font = ("Arial", 20)).pack()
-        self.passwordEntry = tk.Entry(self.loginWindow, 
-                                width = 20, 
-                                font = ("Arial", 12), 
-                                show = "*")
-        self.passwordEntry.pack()
+        self.labelAndEntryAccountLogin("Enter account number:", 20)
+        
+        self.labelAndEntryAccountLogin("Enter Password:", 20)
 
         tk.Button(self.loginWindow, 
                 text = "Login", 
@@ -147,6 +98,27 @@ class accountLogin(createAccount, Database): # inherit methods from Database cla
                 command = self.createAccountMenu).pack(side="left", padx=20)
 
         self.loginWindow.mainloop()
+
+    def labelAndEntryAccountLogin(self, labelText, fontSize):
+        '''
+        Another helper label and entry helper function but this time this is
+        for the accountLogin class
+        '''
+        tk.Label(self.loginWindow, 
+                text = labelText, 
+                width = 17, 
+                height = 1, 
+                font = ("Arial", fontSize)).pack()
+
+        self.nameEntry = tk.Entry(self.loginWindow, 
+                            width = 20, 
+                            font = ("Arial", 12))
+        self.nameEntry.pack()
+
+       
+
+    def createAccountMenu(self):
+        window = createAccount()
 
     def login(self):
         name = self.nameEntry.get()
