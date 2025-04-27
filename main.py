@@ -65,6 +65,10 @@ class createAccount():
                                         self.connection.commit()
                                         messagebox.showinfo("Thank you!", "Thank you for joining EPALCO!")
                                         self.createAccountWindow.destroy()
+
+                                    else:
+                                        messagebox.showinfo("Error!", "That account already exists!")
+
                                 else:
                                     messagebox.showinfo("Error!", "Password confirmation is incorrect!")
                             else:
