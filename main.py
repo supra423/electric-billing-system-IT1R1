@@ -60,15 +60,15 @@ class createAccount(Database): # defined this class first so that
             
         if showEntry:    
 
-            newEntry = tk.Entry(whichWindow,
-                                        width = 20,
-                                        font = ("Arial", 12))
+            newEntry = tk.Entry(whichWindow, 
+                                width = 20,
+                                font = ("Arial", 12))
         else:
             
             newEntry = tk.Entry(whichWindow,
-                                        width = 20,
-                                        font = ("Arial", 12),
-                                        show = "*")
+                                width = 20,
+                                font = ("Arial", 12),
+                                show = "*")
         newEntry.pack()
         return newEntry
 
@@ -118,6 +118,7 @@ class accountLogin(createAccount, Database): # inherit methods from Database cla
             if name == "admin" and password == "1234" and password == "1234":
                 self.loginWindow.destroy()
                 mainMenu()
+
         except Exception:
             messagebox.showinfo("Error!", "Error, please try again!")
 
