@@ -14,11 +14,11 @@ class Database:
             (
 
                 name TEXT NOT NULL,
-                account_number TEXT NOT NULL,
+                accountNumber TEXT NOT NULL,
                 password TEXT NOT NULL,
                 address TEXT NOT NULL,
-                kWh INTEGER NOT NULL,
-                balance INTEGER NOT NULL
+                kWh INTEGER NOT NULL DEFAULT 0,
+                balance INTEGER NOT NULL DEFAULT 0
             
             );
             """

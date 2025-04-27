@@ -18,11 +18,15 @@ class createAccount(Database): # defined this class first so that
             newHomeAddress = self.newHomeAddressEntry.get()
             newPassword = self.newPasswordEntry.get()
             newPasswordConfirm = self.newPasswordConfirmEntry.get()
+            
+            if newPassword == newPasswordConfirm 
+                self.cursor.execute("insert into accounts(name, accountNumber, address, password) ") 
+
+
         except Exception:
             messagebox.showinfo("Error!", "Please don't leave any entries blank!")
 
         
-
 
     def __init__(self):
 
@@ -81,7 +85,7 @@ class createAccount(Database): # defined this class first so that
                 height = 2, 
                 command = self.insertNewAccount).pack(side="right", padx=20)
 
-class accountLogin(Database, createAccount): # inherit methods from Database class for logging in to accounts
+class accountLogin(createAccount, Database): # inherit methods from Database class for logging in to accounts
                                              # and createAccount class to open a create account window
     def createAccountMenu(self):
         window = createAccount()
