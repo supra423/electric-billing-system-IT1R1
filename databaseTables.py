@@ -17,8 +17,8 @@ class Database:
                 accountNumber TEXT NOT NULL,
                 password TEXT NOT NULL,
                 address TEXT NOT NULL,
-                kWh INTEGER NOT NULL DEFAULT 0,
-                balance INTEGER NOT NULL DEFAULT 0
+                kWh INTEGER DEFAULT 0,
+                balance INTEGER DEFAULT 0
             
             );
             """

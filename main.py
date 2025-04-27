@@ -1,3 +1,4 @@
+import sqlite3
 import tkinter as tk
 from tkinter import messagebox
 
@@ -5,11 +6,13 @@ from databaseTables import Database
 from windowMain import mainMenu
 
 
-class createAccount(Database): # defined this class first so that 
-                               # accountLogin class can inherit from this class
-                               # this class also inherits the Database class to
-                               # insert new accounts into the database
+class createAccount():  
+
     def __init__(self):
+
+        self.connection = sqlite3.connect('database.s3db')
+        self.cursor = self.connection.cursor()
+        
 
         self.createAccountWindow = tk.Tk()
         self.createAccountWindow.title("Create an account")
@@ -43,10 +46,40 @@ class createAccount(Database): # defined this class first so that
             newHomeAddress = self.newHomeAddressEntry.get()
             newPassword = self.newPasswordEntry.get()
             newPasswordConfirm = self.newPasswordConfirmEntry.get()
-
-        except Exception:
-            messagebox.showinfo("Error!", "Error, please try again!")        
-
+            if newName:
+                pass
+                if newAccountNumber:
+                    pass
+                    if newHomeAddress:
+                        pass
+                        if newPassword:
+                            pass
+                            if newPasswordConfirm:
+                                if newPassword == newPasswordConfirm:
+                                    accountFetch = self.cursor.execute("select name, accountNumber, password, address from accounts where name = ? and accountNumber = ? and password = ? and address = ?",
+                                                        (newName, newAccountNumber, newPassword, newHomeAddress)).fetchone()
+                                    if not accountFetch:
+                                        self.cursor.execute("insert into accounts(name, accountNumber, password, address) values(?, ?, ?, ?)", 
+                                                            (newName, newAccountNumber, newPassword, newHomeAddress))
+                                        
+                                        self.connection.commit()
+                                        messagebox.showinfo("Thank you!", "Thank you for joining EPALCO!")
+                                        self.createAccountWindow.destroy()
+                                else:
+                                    messagebox.showinfo("Error!", "Password confirmation is incorrect!")
+                            else:
+                                messagebox.showinfo("Error!", "Please confirm your password!")
+                        else:
+                            messagebox.showinfo("Error!", "Please enter your password!")
+                    else:
+                        messagebox.showinfo("Error!", "Please enter your home address!")
+                else:
+                    messagebox.showinfo("Error!", "Please enter your account number!")
+            else:
+                messagebox.showinfo("Error!", "Please enter your name!")
+        except Exception as e:
+            messagebox.showinfo("Error!", "Error, please try again!\n")        
+            print(e)
     
     def labelAndEntry(self, whichWindow, showEntry, labelText, fontSize):
         '''
@@ -72,9 +105,13 @@ class createAccount(Database): # defined this class first so that
         newEntry.pack()
         return newEntry
 
-class accountLogin(createAccount, Database): # inherit methods from Database class for logging in to accounts
+class accountLogin(createAccount): # inherit methods from Database class for logging in to accounts
                                              # and createAccount class to open a create account window
     def __init__(self):
+
+        self.connection = sqlite3.connect('database.s3db')
+        self.cursor = self.connection.cursor()
+
         self.loginWindow = tk.Tk()
         self.loginWindow.title("Login")
         self.loginWindow.geometry("300x400")
@@ -115,13 +152,30 @@ class accountLogin(createAccount, Database): # inherit methods from Database cla
             accountNumber = self.accountNumberEntry.get()
             password = self.passwordEntry.get()
 
-            if name == "admin" and password == "1234" and password == "1234":
-                self.loginWindow.destroy()
-                mainMenu()
+            if name:
+                pass
+                if accountNumber:
+                    pass
+                    if password:
+                        accountFetch = self.cursor.execute("select name, accountNumber, password from accounts where name = ? and accountNumber = ? and password = ?",
+                                                        (name, accountNumber, password)).fetchone()
+                        if accountFetch:
+                            self.loginWindow.destroy()
+                            mainMenu()
+                        else:
+                            messagebox.showinfo("Error!", "That account does not exist!")
+                    else:
+                        messagebox.showinfo("Error!", "Please enter your password!")
+                else:
+                    messagebox.showinfo("Error!", "Please enter your account number!")
+            else:
+                messagebox.showinfo("Error!", "Please enter your name!")
 
-        except Exception:
+        except Exception as e:
             messagebox.showinfo("Error!", "Error, please try again!")
+            print(e)
 
 if __name__ == "__main__":
-    accountLogin()
     Database()
+    accountLogin()
+
