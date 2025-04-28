@@ -41,13 +41,13 @@ class createAccount():
 
     def insertNewAccount(self):
         try:
-            newName = self.newNameEntry.get()
-            newAccountNumber = self.newAccountNumberEntry.get()
-            newHomeAddress = self.newHomeAddressEntry.get()
-            newPassword = self.newPasswordEntry.get()
-            newPasswordConfirm = self.newPasswordConfirmEntry.get()
-            # error message list that contains the type of error and the error message that corresponds to it
-            errorMessages = (
+            newName = self.newNameEntry.get().strip()
+            newAccountNumber = self.newAccountNumberEntry.get().strip().replace(" ", "")
+            newHomeAddress = self.newHomeAddressEntry.get().strip()
+            newPassword = self.newPasswordEntry.get().strip()
+            newPasswordConfirm = self.newPasswordConfirmEntry.get().strip()
+            # error message list that contains the type of empty string error and the error message that corresponds to it
+            emptyEntryMessages = (
                     (newName, 'Please enter your name'),
                     (newAccountNumber, 'Please enter your account number!'),
                     (newHomeAddress, 'Please enter your home address!'),
@@ -55,31 +55,37 @@ class createAccount():
                     (newPasswordConfirm, 'Please confirm your password!')
             )
 
-            for errorTuple in errorMessages:
+            for errorTuple in emptyEntryMessages:
                 if errorTuple[0] == '':
                     messagebox.showinfo('Error!', errorTuple[1])
                     return 
 
-            if newPassword == newPasswordConfirm:
-                accountFetch = self.cursor.execute("select accountNumber from accounts where accountNumber = ?",
-                                                   (newAccountNumber,)).fetchone()
-                if not accountFetch:
-                    self.cursor.execute("insert into accounts(name, accountNumber, password, address) values(?, ?, ?, ?)", 
-                                        (newName, newAccountNumber, newPassword, newHomeAddress))
-                    self.connection.commit()
-                    messagebox.showinfo("Thank you!", "Thank you for joining EPALCO!")
-                    self.createAccountWindow.destroy()
+                
+            if newPassword != newPasswordConfirm:
+                messagebox.showinfo('Error!', 'Password confirmation is incorrect!')
+                return
+            
+        
+            accountFetch = self.cursor.execute("select accountNumber from accounts where accountNumber = ?",
+                                                    (newAccountNumber,)).fetchone()
+            if accountFetch:
+                messagebox.showinfo('Error!', 'That account already exists!')
+                return
+            
+            if len(newAccountNumber) != 16:
+                messagebox.showinfo('Error!', 'Account number must be 16-digits')
+                return
 
-                else:
-                    messagebox.showinfo("Error!", "That account already exists!")
+            self.cursor.execute("insert into accounts(name, accountNumber, password, address) values(?, ?, ?, ?)", 
+                                (newName, newAccountNumber, newPassword, newHomeAddress))
+            self.connection.commit()
+            messagebox.showinfo("Thank you!", "Thank you for joining EPALCO!")
+            self.createAccountWindow.destroy()
 
-            else:
-                messagebox.showinfo("Error!", "Password confirmation is incorrect!")
 
         except Exception as e:
             messagebox.showinfo("Error!", "Error, please try again!\n")        
-            print(e)
-            
+            print(e)            
     def labelAndEntry(self, whichWindow, showEntry, labelText, fontSize):
         '''
         just a helper function to reduce the amount of lines

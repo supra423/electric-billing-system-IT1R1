@@ -3,7 +3,7 @@ import tkinter as tk
 from databaseTables import Database
 
 
-class mainMenu(Database): # inherit methods from Database class
+class mainMenu(Database):
     def __init__(self):
         self.mainWindow = tk.Tk()
         self.mainWindow.title("Main Menu")
