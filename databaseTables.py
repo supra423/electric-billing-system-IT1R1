@@ -18,8 +18,10 @@ class Database:
                 password TEXT NOT NULL,
                 address TEXT NOT NULL,
                 kWh INTEGER DEFAULT 0,
-                balance INTEGER DEFAULT 0
-            
+                balance INTEGER DEFAULT 0,
+                paymentStatus
+                accountStatus
+                
             );
             """
         )

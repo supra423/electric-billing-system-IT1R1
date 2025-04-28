@@ -59,12 +59,10 @@ class createAccount():
                 if errorTuple[0] == '':
                     messagebox.showinfo('Error!', errorTuple[1])
                     return 
-
                 
             if newPassword != newPasswordConfirm:
                 messagebox.showinfo('Error!', 'Password confirmation is incorrect!')
                 return
-            
         
             accountFetch = self.cursor.execute("select accountNumber from accounts where accountNumber = ?",
                                                     (newAccountNumber,)).fetchone()
@@ -81,7 +79,6 @@ class createAccount():
             self.connection.commit()
             messagebox.showinfo("Thank you!", "Thank you for joining EPALCO!")
             self.createAccountWindow.destroy()
-
 
         except Exception as e:
             messagebox.showinfo("Error!", "Error, please try again!\n")        
@@ -128,8 +125,6 @@ class accountLogin(createAccount): # inherit methods from Database class for log
                 height = 3, 
                 font = ("Arial", 30)).pack()
 
-        self.nameEntry = self.labelAndEntry(self.loginWindow, True, "Enter Name:", 20)
-
         self.accountNumberEntry = self.labelAndEntry(self.loginWindow, True, "Enter account number:", 20)
         
         self.passwordEntry = self.labelAndEntry(self.loginWindow, False, "Enter Password:", 20)
@@ -153,12 +148,10 @@ class accountLogin(createAccount): # inherit methods from Database class for log
 
     def login(self):
         try:
-            name = self.nameEntry.get()
-            accountNumber = self.accountNumberEntry.get()
-            password = self.passwordEntry.get()
+            accountNumber = self.accountNumberEntry.get().strip().replace(" ", "")
+            password = self.passwordEntry.get().strip()
 
             errorMessages = (
-                (name, 'Please enter your name!'),
                 (accountNumber, 'Please enter your account number!'),
                 (password, 'Please enter your password!')
             )
@@ -168,8 +161,8 @@ class accountLogin(createAccount): # inherit methods from Database class for log
                     messagebox.showinfo('Error!', errorTuple[1])
                     return
 
-            accountFetch = self.cursor.execute("select name, accountNumber, password from accounts where name = ? and accountNumber = ? and password = ?",
-                                               (name, accountNumber, password)).fetchone()
+            accountFetch = self.cursor.execute("select accountNumber, password from accounts where accountNumber = ? and password = ?",
+                                               (accountNumber, password)).fetchone()
 
             if accountFetch:
                 self.loginWindow.destroy()
