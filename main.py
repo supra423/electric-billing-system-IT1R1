@@ -46,45 +46,40 @@ class createAccount():
             newHomeAddress = self.newHomeAddressEntry.get()
             newPassword = self.newPasswordEntry.get()
             newPasswordConfirm = self.newPasswordConfirmEntry.get()
-            if newName:
-                pass
-                if newAccountNumber:
-                    pass
-                    if newHomeAddress:
-                        pass
-                        if newPassword:
-                            pass
-                            if newPasswordConfirm:
-                                if newPassword == newPasswordConfirm:
-                                    accountFetch = self.cursor.execute("select name, accountNumber, password, address from accounts where name = ? and accountNumber = ? and password = ? and address = ?",
-                                                        (newName, newAccountNumber, newPassword, newHomeAddress)).fetchone()
-                                    if not accountFetch:
-                                        self.cursor.execute("insert into accounts(name, accountNumber, password, address) values(?, ?, ?, ?)", 
-                                                            (newName, newAccountNumber, newPassword, newHomeAddress))
-                                        
-                                        self.connection.commit()
-                                        messagebox.showinfo("Thank you!", "Thank you for joining EPALCO!")
-                                        self.createAccountWindow.destroy()
+            # error message list that contains the type of error and the error message that corresponds to it
+            errorMessages = (
+                    (newName, 'Please enter your name'),
+                    (newAccountNumber, 'Please enter your account number!'),
+                    (newHomeAddress, 'Please enter your home address!'),
+                    (newPassword, 'Please enter your password'),
+                    (newPasswordConfirm, 'Please confirm your password!')
+            )
 
-                                    else:
-                                        messagebox.showinfo("Error!", "That account already exists!")
+            for errorTuple in errorMessages:
+                if errorTuple[0] == '':
+                    messagebox.showinfo('Error!', errorTuple[1])
+                    return 
 
-                                else:
-                                    messagebox.showinfo("Error!", "Password confirmation is incorrect!")
-                            else:
-                                messagebox.showinfo("Error!", "Please confirm your password!")
-                        else:
-                            messagebox.showinfo("Error!", "Please enter your password!")
-                    else:
-                        messagebox.showinfo("Error!", "Please enter your home address!")
+            if newPassword == newPasswordConfirm:
+                accountFetch = self.cursor.execute("select accountNumber from accounts where accountNumber = ?",
+                                                   (newAccountNumber,)).fetchone()
+                if not accountFetch:
+                    self.cursor.execute("insert into accounts(name, accountNumber, password, address) values(?, ?, ?, ?)", 
+                                        (newName, newAccountNumber, newPassword, newHomeAddress))
+                    self.connection.commit()
+                    messagebox.showinfo("Thank you!", "Thank you for joining EPALCO!")
+                    self.createAccountWindow.destroy()
+
                 else:
-                    messagebox.showinfo("Error!", "Please enter your account number!")
+                    messagebox.showinfo("Error!", "That account already exists!")
+
             else:
-                messagebox.showinfo("Error!", "Please enter your name!")
+                messagebox.showinfo("Error!", "Password confirmation is incorrect!")
+
         except Exception as e:
             messagebox.showinfo("Error!", "Error, please try again!\n")        
             print(e)
-    
+            
     def labelAndEntry(self, whichWindow, showEntry, labelText, fontSize):
         '''
         just a helper function to reduce the amount of lines
@@ -156,24 +151,25 @@ class accountLogin(createAccount): # inherit methods from Database class for log
             accountNumber = self.accountNumberEntry.get()
             password = self.passwordEntry.get()
 
-            if name:
-                pass
-                if accountNumber:
-                    pass
-                    if password:
-                        accountFetch = self.cursor.execute("select name, accountNumber, password from accounts where name = ? and accountNumber = ? and password = ?",
-                                                        (name, accountNumber, password)).fetchone()
-                        if accountFetch:
-                            self.loginWindow.destroy()
-                            mainMenu()
-                        else:
-                            messagebox.showinfo("Error!", "That account does not exist!")
-                    else:
-                        messagebox.showinfo("Error!", "Please enter your password!")
-                else:
-                    messagebox.showinfo("Error!", "Please enter your account number!")
+            errorMessages = (
+                (name, 'Please enter your name!'),
+                (accountNumber, 'Please enter your account number!'),
+                (password, 'Please enter your password!')
+            )
+
+            for errorTuple in errorMessages:
+                if errorTuple[0] == '':
+                    messagebox.showinfo('Error!', errorTuple[1])
+                    return
+
+            accountFetch = self.cursor.execute("select name, accountNumber, password from accounts where name = ? and accountNumber = ? and password = ?",
+                                               (name, accountNumber, password)).fetchone()
+
+            if accountFetch:
+                self.loginWindow.destroy()
+                mainMenu()
             else:
-                messagebox.showinfo("Error!", "Please enter your name!")
+                messagebox.showinfo('Error!', 'That account does not exist!')
 
         except Exception as e:
             messagebox.showinfo("Error!", "Error, please try again!")
