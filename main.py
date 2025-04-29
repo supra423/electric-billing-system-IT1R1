@@ -16,7 +16,7 @@ class createAccount():
 
         self.createAccountWindow = tk.Tk()
         self.createAccountWindow.title("Create an account")
-        self.createAccountWindow.geometry("400x400")
+        self.createAccountWindow.geometry("450x500")
         self.createAccountWindow.resizable(False, False)
 
         # new name
@@ -29,7 +29,8 @@ class createAccount():
         self.newPasswordEntry = self.labelAndEntry(self.createAccountWindow, False, "Enter new password:", 20)
         # confirm new password
         self.newPasswordConfirmEntry = self.labelAndEntry(self.createAccountWindow, False, "Confirm new password:", 20)
-
+        # initial payment for installation
+        self.installationFee = self.labelAndEntry(self.createAccountWindow, True, "Installation fee\n(Php. 5,000.00):", 20)
 
         tk.Button(self.createAccountWindow, 
                 text = "Create \nnew account", 
@@ -46,24 +47,39 @@ class createAccount():
             newHomeAddress = self.newHomeAddressEntry.get().strip()
             newPassword = self.newPasswordEntry.get().strip()
             newPasswordConfirm = self.newPasswordConfirmEntry.get().strip()
+            installationFee = self.installationFee.get().strip()
+
+
             # error message list that contains the type of empty string error and the error message that corresponds to it
             emptyEntryMessages = (
                     (newName, 'Please enter your name'),
                     (newAccountNumber, 'Please enter your account number!'),
                     (newHomeAddress, 'Please enter your home address!'),
                     (newPassword, 'Please enter your password'),
-                    (newPasswordConfirm, 'Please confirm your password!')
+                    (newPasswordConfirm, 'Please confirm your password!'),
+                    (installationFee, 'Please pay the installation fee!')
             )
 
             for errorTuple in emptyEntryMessages:
-                if errorTuple[0] == '':
+                if not errorTuple[0]:
                     messagebox.showinfo('Error!', errorTuple[1])
                     return 
                 
             if newPassword != newPasswordConfirm:
                 messagebox.showinfo('Error!', 'Password confirmation is incorrect!')
                 return
-        
+            
+            installationFee = float(installationFee)
+
+            if installationFee < 5000:
+                messagebox.showinfo("Invalid payment!", "Please pay the proper amount!")
+                return
+            elif installationFee > 5000:
+                messagebox.showinfo("Change", f"Here is your change: {installationFee - 5000}")
+            else:
+                pass
+
+
             accountFetch = self.cursor.execute("select accountNumber from accounts where accountNumber = ?",
                                                     (newAccountNumber,)).fetchone()
             if accountFetch:

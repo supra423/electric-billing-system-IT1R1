@@ -31,7 +31,7 @@ class mainMenu(Database):
         self.leftFrame.grid_columnconfigure((0, 1), weight = 1)
 
         self.button1 = tk.Button(self.leftFrame, 
-                            text = "Button 1", 
+                            text = "", 
                             font = ("Arial", 15))
         self.button1.grid(row = 0, 
                     column = 0, 
