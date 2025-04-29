@@ -75,10 +75,9 @@ class createAccount():
                 messagebox.showinfo("Invalid payment!", "Please pay the proper amount!")
                 return
             elif installationFee > 5000:
-                messagebox.showinfo("Change", f"Here is your change: {installationFee - 5000}")
+                messagebox.showinfo("Change", f"Here is your change: {installationFee - 5000:.2f}")
             else:
                 pass
-
 
             accountFetch = self.cursor.execute("select accountNumber from accounts where accountNumber = ?",
                                                     (newAccountNumber,)).fetchone()
