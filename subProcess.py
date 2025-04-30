@@ -22,7 +22,6 @@ class subProcess:
 
         return False
 
-    #scriptPath = 'kwh.py'
     def startProcess(self):
         if not self.isProcessRunning():
 
