@@ -1,20 +1,37 @@
+import os
 import subprocess
 import sys
 
 import psutil
 
 
-def isProcessRunning(scriptName):
+class subProcess:
+    def __init__(self, scriptName):
+        self.scriptName = scriptName
+        self.startProcess()
 
-    for proc in psutil.process_iter(attrs = ['pid', 'name', 'cmdline']):
-        if proc.info['name'] == 'python.exe' and scriptName in ' '.join(proc.info['cmdline']):
-            return True
+    def isProcessRunning(self):
+        for proc in psutil.process_iter(attrs = ['pid', 'name', 'cmdline']):
 
-    return False
+            try:
+                if proc.info['name'] == 'python.exe' and self.scriptName in ' '.join(proc.info['cmdline']):
+                    return True
 
-scriptPath = 'kwh.py'
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                continue
 
-if not isProcessRunning(scriptPath):
-    subprocess.Popen([sys.executable, scriptPath], creationflags=subprocess.DETACHED_PROCESS)
-else:
-    print("kWh process is already running!")
+        return False
+
+    #scriptPath = 'kwh.py'
+    def startProcess(self):
+        if not self.isProcessRunning():
+
+            if os.name == 'nt':
+                subprocess.Popen([sys.executable, self.scriptName], creationflags = subprocess.DETACHED_PROCESS)
+
+            else:
+                print("You are not running in windows!")
+                return
+
+        else:
+            print(f"{self.scriptName} is already running!")

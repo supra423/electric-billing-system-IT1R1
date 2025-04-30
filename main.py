@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 from databaseTables import Database
+from subProcess import subProcess
 from windowMain import mainMenu
 
 
@@ -191,5 +192,6 @@ class accountLogin(createAccount): # inherit methods from Database class for log
 
 if __name__ == "__main__":
     Database()
+    subProcess("kwh.py")
     accountLogin()
 
