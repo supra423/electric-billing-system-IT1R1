@@ -19,7 +19,7 @@ class Database:
                 address TEXT NOT NULL,
                 kWh INTEGER DEFAULT 0,
                 balance INTEGER DEFAULT 0,
-                paymentStatus
+                paymentStatus,
                 accountStatus
                 
             );
