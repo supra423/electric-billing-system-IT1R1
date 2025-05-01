@@ -1,4 +1,4 @@
-import json
+import json #derulo
 
 try:
     with open("configs.json") as file:

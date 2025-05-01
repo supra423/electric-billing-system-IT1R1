@@ -67,6 +67,8 @@ class mainMenu():
         from loginWindow import loginWindow 
         if messagebox.askokcancel("Quit", "Do you really want to Exit?"):
             self.mainWindow.destroy()
+            loginWindow()
+            
         
 
     def mainButtons(self, buttonText, buttonCommand):
