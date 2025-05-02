@@ -28,7 +28,7 @@ class subProcess:
         pid = self.isprocessrunning()
         if os.name == 'nt' and pid is None:
             process = subprocess.Popen([sys.executable, self.scriptname], creationflags = subprocess.DETACHED_PROCESS)
-        
+       
             print(f"{self.scriptname} is running! PID: {process.pid}")
 
         elif os.name != 'nt':

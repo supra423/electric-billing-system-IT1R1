@@ -17,6 +17,7 @@ class createAccount():
         self.createAccountWindow.title("Create an account")
         self.createAccountWindow.geometry("450x500")
         self.createAccountWindow.resizable(False, False)
+        self.createAccountWindow.configure(bg = "#aaaaaa")
 
         # new name
         self.newNameEntry = self.labelAndEntry(self.createAccountWindow, True, "Enter name:", 20)
@@ -35,7 +36,8 @@ class createAccount():
                 text = "Create \nnew account", 
                 width = 15, 
                 height = 2, 
-                command = self.insertNewAccount).pack(side="right", padx=20)
+                command = self.insertNewAccount,
+                bg = "#c6c6c6").pack(side="right", padx=20)
 
         self.createAccountWindow.mainloop()
 
@@ -105,7 +107,8 @@ class createAccount():
 
         tk.Label(whichWindow,
                  text = labelText, 
-                 font = ("Arial", fontSize)).pack()
+                 font = ("Arial", fontSize),
+                 bg = "#aaaaaa").pack()
             
         if showEntry:    
 
@@ -132,12 +135,14 @@ class accountLogin(createAccount): # inherit from createAccount class to open a 
         self.loginWindow.title("Login")
         self.loginWindow.geometry("300x400")
         self.loginWindow.resizable(False, False)
+        self.loginWindow.configure(bg = "#aaaaaa")
 
         tk.Label(self.loginWindow, 
                 text = "Welcome!", 
                 width = 10, 
                 height = 3, 
-                font = ("Arial", 30)).pack()
+                font = ("Arial", 30),
+                 bg = "#aaaaaa").pack()
 
         self.accountNumberEntry = self.labelAndEntry(self.loginWindow, True, "Enter account number:", 20)
         
@@ -147,13 +152,15 @@ class accountLogin(createAccount): # inherit from createAccount class to open a 
                 text = "Login", 
                 width = 15, 
                 height = 2, 
-                command = self.login).pack(side="right", padx=20)
+                command = self.login,
+                bg = "#c6c6c6").pack(side="right", padx=20)
 
         tk.Button(self.loginWindow, 
                 text = "Create \nnew account?", 
                 width = 15, 
                 height = 2, 
-                command = self.createAccountMenu).pack(side="left", padx=20)
+                command = self.createAccountMenu,
+                bg = "#c6c6c6").pack(side="left", padx=20)
 
         self.loginWindow.mainloop()
 
