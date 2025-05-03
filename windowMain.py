@@ -7,78 +7,35 @@ class mainMenu(Database):
     def __init__(self):
         self.mainWindow = tk.Tk()
         self.mainWindow.title("Main Menu")
-        self.mainWindow.geometry("1000x700")
+        self.mainWindow.minsize(800, 500)
+        self.mainWindow.configure(bg = "#aaaaaa")
 
-        self.label1 = tk.Label(self.mainWindow, 
-                        text = "Epalco", 
-                        font=("Arial", 20))
-        self.label1.pack(side="top", 
-                    anchor = "w", 
-                    padx = 30, 
-                    pady = 30)
-
-        # insert left frame
-
-        self.leftFrame = tk.Frame(self.mainWindow)
-        self.leftFrame.pack(side = "left", 
-                    padx = 15, 
-                    pady = 30, 
-                    expand = True, 
-                    fill = "both")
-
-        self.leftFrame.grid_rowconfigure(0, weight = 1)
-        self.leftFrame.grid_rowconfigure(1, weight = 0)
-        self.leftFrame.grid_columnconfigure((0, 1), weight = 1)
-
-        self.button1 = tk.Button(self.leftFrame, 
-                            text = "", 
-                            font = ("Arial", 15))
-        self.button1.grid(row = 0, 
-                    column = 0, 
-                    padx = 20, 
-                    pady = 10, 
-                    sticky = "sew")
-
-        self.button2 = tk.Button(self.leftFrame, 
-                            text="Button 2", 
-                            font=("Arial", 15))
-        self.button2.grid(row = 0, 
-                    column = 1, 
-                    padx = 20, 
-                    pady = 10, 
-                    sticky = "sew")
-
-        # insert right frame
-
-        self.rightFrame = tk.Frame(self.mainWindow)
-        self.rightFrame.pack(side = "right", 
-                        anchor = "s", 
-                        padx = 10, 
-                        pady = 30, 
-                        expand = True, 
-                        fill = "both")
-
-        self.rightFrame.grid_rowconfigure(0, weight = 1)
-        self.rightFrame.grid_rowconfigure(1, weight = 0)
-        self.rightFrame.grid_columnconfigure((0, 1), weight = 1)
-
-        self.button3 = tk.Button(self.rightFrame, 
-                            text = "Button 3", 
-                            font = ("Arial", 15))
-        self.button3.grid(row = 0, 
-                    column = 0, 
-                    padx = 20, 
-                    pady = 10, 
-                    sticky = "sew")
-
-        self.button4 = tk.Button(self.rightFrame, 
-                            text = "Button 4", 
-                            font = ("Arial", 15))
-        self.button4.grid(row = 0, 
-                    column = 1, 
-                    padx = 20, 
-                    pady = 10, 
-                    sticky = "sew")
+        self.sideBar = tk.Frame(self.mainWindow, bg = '#2c3e50', width = 200)
+        self.sideBar.pack(side = 'left', fill = 'y')
+         
+        self.mainButtons("1", self.passFunction)
+        self.mainButtons("2", self.passFunction)
+        self.mainButtons("3", self.passFunction)
+        self.mainButtons("4", self.passFunction)
 
         self.mainWindow.mainloop()
 
+    def mainButtons(self, buttonText, buttonCommand):
+        ' helper function for making buttons '
+        tk.Button(self.sideBar,
+                  text = buttonText,
+                  width = 20,
+                  height = 2,
+                  activebackground = "#7baee0",
+                  command = buttonCommand,
+                  anchor = "w",
+                  padx = 10,
+                  bg = "#3f5a75",
+                  fg = "#ffffff").pack(pady = 10, fill = "x" )
+        
+    def passFunction(self):
+        pass
+                
+
+
+window = mainMenu()

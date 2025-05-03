@@ -24,15 +24,13 @@ class subProcess:
         return None
 
     def startprocess(self):
-        #if not self.isprocessrunning():
         pid = self.isprocessrunning()
         if os.name == 'nt' and pid is None:
             process = subprocess.Popen([sys.executable, self.scriptname], creationflags = subprocess.DETACHED_PROCESS)
        
-            print(f"{self.scriptname} is running! PID: {process.pid}")
+            print(f"{self.scriptname} is running! PID: {process.pid}") # printing the PID is for debugging purposes
 
         elif os.name != 'nt':
-            #print("you are not running in windows!")
             messagebox.showinfo("error!", "you must be running on windows!")
             raise Exception
     
