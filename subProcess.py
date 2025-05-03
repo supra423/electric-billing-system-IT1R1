@@ -1,6 +1,7 @@
 import os
 import subprocess
 import sys
+from tkinter import messagebox
 
 import psutil
 
@@ -27,10 +28,11 @@ class subProcess:
 
             if os.name == 'nt':
                 subprocess.Popen([sys.executable, self.scriptName], creationflags = subprocess.DETACHED_PROCESS)
-
+                print(f"{self.scriptName} is running!")
             else:
-                print("You are not running in windows!")
-                return
-
+                #print("You are not running in windows!")
+                messagebox.showinfo("Error!", "You must be running on windows!")
+                raise Exception
+        
         else:
             print(f"{self.scriptName} is already running!")
