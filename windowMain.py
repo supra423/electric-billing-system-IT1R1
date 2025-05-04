@@ -30,7 +30,7 @@ class mainMenu():
                   font = ("Arial", 16, "bold")).pack(pady = 10)
         
         img = Image.open("images/bell-icon.png")
-        img = img.resize((64, 64))
+        img = img.resize((40, 40))
         bellIcon = ImageTk.PhotoImage(img)
         tk.Button(self.mainWindow,
                   image = bellIcon,
@@ -64,7 +64,3 @@ class mainMenu():
         
     def passFunction(self):
         pass
-                
-
-
-window = mainMenu()
