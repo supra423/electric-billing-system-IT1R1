@@ -2,6 +2,13 @@ import sqlite3
 
 
 class Database:
+    """
+    Class for the database tables
+    1st table is the main table for the accounts
+
+    2nd table is for the notifications when the user
+    clicks on the notification bell icon
+    """
     def __init__(self):
 
         self.connection = sqlite3.connect('database.s3db')
@@ -18,11 +25,17 @@ class Database:
                 password TEXT NOT NULL,
                 address TEXT NOT NULL,
                 kWh INTEGER DEFAULT 0,
-                balance INTEGER DEFAULT 0,
                 paymentStatus,
                 accountStatus
                 
             );
+
+            CREATE TABLE IF NOT EXISTS notifications
+            (
+                accountNumber TEXT NOT NULL,
+                viewed 
+            );
+
             """
         )
         self.connection.commit()

@@ -182,12 +182,12 @@ class accountLogin(createAccount): # inherit from createAccount class to open a 
                     messagebox.showinfo('Error!', errorTuple[1])
                     return
 
-            accountFetch = self.cursor.execute("select accountNumber, password from accounts where accountNumber = ? and password = ?",
+                accountFetch = self.cursor.execute("select name, accountNumber, address from accounts where accountNumber = ? and password = ?",
                                                (accountNumber, password)).fetchone()
 
             if accountFetch:
                 self.loginWindow.destroy()
-                mainMenu()
+                mainMenu(accountFetch)
             else:
                 messagebox.showinfo('Error!', 'That account does not exist!')
 
