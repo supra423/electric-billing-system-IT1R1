@@ -25,15 +25,15 @@ class Database:
                 password TEXT NOT NULL,
                 address TEXT NOT NULL,
                 kWh INTEGER DEFAULT 0,
-                paymentStatus,
-                accountStatus
+                paymentStatus TEXT DEFAULT 'unpaid',
+                accountStatus TEXT DEFAULT 'active'
                 
             );
 
             CREATE TABLE IF NOT EXISTS notifications
             (
                 accountNumber TEXT NOT NULL,
-                viewed 
+                viewed TEXT DEFAULT 'true'
             );
 
             """
