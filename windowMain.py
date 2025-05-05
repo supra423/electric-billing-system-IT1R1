@@ -73,31 +73,7 @@ class mainMenu():
     def mainPage(self):
         self.clearContent()
 
-        bell_frame = tk.Frame(self.mainWindow, bg = "#aaaaaa")
-        bell_frame.grid(row = 0, column = 1, sticky = "ne", padx = 20, pady = 20)
-
-        # this serves as a flag to determine if the user has already viewed their notifications or not
-        # the notifcations table updates every time a bill is generated
-        self.viewedNotification = self.cursor.execute("select viewed from notifications where accountNumber = ?", (self.accountNumber,)).fetchone()
-
-        if self.viewedNotification[0] == 'true':
-            img = Image.open("images/defaultBell.png")
-        
-        else:
-            img = Image.open("images/notifiedBell.png")
-        
-
-        img = img.resize((80, 80))
-        self.bellIcon = ImageTk.PhotoImage(img)  
-        tk.Button(bell_frame,
-                  image = self.bellIcon,
-                  fg = "#aaaaaa",
-                  bg = "#aaaaaa",
-                  bd = 0,
-                  activebackground = "#aaaaaa",
-                  width = 50,
-                  height = 50,
-                  command = self.notificationButton).pack()
+        self.bellIconSwitch()
 
         content = tk.Frame(self.contentFrame, bg = "#aaaaaa")
         content.grid(row = 1, column = 0, columnspan = 2, sticky = "nw", padx = 20, pady = 20)
@@ -127,9 +103,13 @@ class mainMenu():
         self.clearContent()
         tk.Label(self.contentFrame, text = "Pay Page", font = ("Arial", 24), bg = "#aaaaaa").grid(row = 0, column = 0, padx = 20, pady = 20)
 
+        self.bellIconSwitch()
+
     def viewTransactionHistory(self):
         self.clearContent()
         tk.Label(self.contentFrame, text = "Transaction History Page", font = ("Arial", 24), bg =  "#aaaaaa").grid(row = 0, column = 0, padx = 20, pady = 20)
+
+        self.bellIconSwitch()
 
     def logout(self):
         from loginWindow import accountLogin
@@ -144,6 +124,7 @@ class mainMenu():
         '''
         for widget in self.contentFrame.winfo_children():
             widget.destroy()
+
     def notificationButton(self):
         if self.viewedNotification[0] == 'false':
 
@@ -152,10 +133,41 @@ class mainMenu():
             self.connection.commit()
         else:
             messagebox.showinfo("Notification!", "There are currently no notifications!")
-            
 
-        self.clearContent()
-        self.mainPage()
+        self.bellIconSwitch()
+        # self.mainPage()
 
+    def bellIconSwitch(self):
+        '''
+        helper function that continuously checks 
+        every time if a notification is available,
+        this function gets called every time a user clicks a button
+        '''
+        bellFrame = tk.Frame(self.mainWindow, bg = "#aaaaaa")
+        bellFrame.grid(row = 0, column = 1, sticky = "ne", padx = 20, pady = 20)
+
+        # this serves as a flag to determine if the user has already viewed their notifications or not
+        # the notifcations table updates every time a bill is generated
+        self.viewedNotification = self.cursor.execute("select viewed from notifications where accountNumber = ?", (self.accountNumber,)).fetchone()
+
+        if self.viewedNotification[0] == 'true':
+            img = Image.open("images/defaultBell.png")
+        
+        else:
+            img = Image.open("images/notifiedBell.png")
+        
+
+        img = img.resize((80, 80))
+        self.bellIcon = ImageTk.PhotoImage(img)  
+        tk.Button(bellFrame,
+                  image = self.bellIcon,
+                  fg = "#aaaaaa",
+                  bg = "#aaaaaa",
+                  bd = 0,
+                  activebackground = "#aaaaaa",
+                  width = 50,
+                  height = 50,
+                  command = self.notificationButton).pack()
+    
     def passFunction(self):
         pass

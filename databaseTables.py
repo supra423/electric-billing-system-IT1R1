@@ -19,7 +19,6 @@ class Database:
             """
             CREATE TABLE IF NOT EXISTS accounts 
             (
-
                 name TEXT NOT NULL,
                 accountNumber TEXT NOT NULL,
                 password TEXT NOT NULL,
@@ -27,7 +26,6 @@ class Database:
                 kWh INTEGER DEFAULT 0,
                 paymentStatus TEXT DEFAULT 'unpaid',
                 accountStatus TEXT DEFAULT 'active'
-                
             );
 
             CREATE TABLE IF NOT EXISTS notifications
@@ -36,6 +34,19 @@ class Database:
                 viewed TEXT DEFAULT 'true'
             );
 
+            CREATE TABLE IF NOT EXISTS history 
+            (
+                accountNumber TEXT NOT NULL,
+                amountPaid INTEGER NOT NULL,
+                timestamp TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS readings
+            (
+                accountNumber TEXT NOT NULL,
+                previousReading INTEGER DEFAULT 0,
+                currentReading INTEGER DEFAULT 0
+            );
             """
         )
         self.connection.commit()

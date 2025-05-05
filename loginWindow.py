@@ -92,9 +92,13 @@ class createAccount():
 
             self.cursor.execute("insert into accounts(name, accountNumber, password, address) values(?, ?, ?, ?)", 
                                 (newName, newAccountNumber, newPassword, newHomeAddress))
+
             self.cursor.execute("insert into notifications(accountNumber) values(?)", (newAccountNumber,))
 
+            self.cursor.execute("insert into readings(accountNumber) values(?)", (newAccountNumber,))
+
             self.connection.commit()
+            
             messagebox.showinfo("Thank you!", "Thank you for joining EPALCO!")
             self.createAccountWindow.destroy()
 
