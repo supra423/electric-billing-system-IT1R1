@@ -18,11 +18,12 @@ class mainMenu():
         self.connection = sqlite3.connect('database.s3db')
         self.cursor = self.connection.cursor()
 
-
         self.mainWindow = tk.Tk()
         self.mainWindow.title("Main Menu")
         self.mainWindow.minsize(1000, 700)
-        self.mainWindow.configure(bg = "#aaaaaa")
+        self.mainWindow.configure(bg = "#bbbbbb")
+
+        
 
         # Configure the grid layout of the main window
         self.mainWindow.rowconfigure(0, weight=1)
@@ -33,7 +34,7 @@ class mainMenu():
         self.sideBar.grid(row = 0, column = 0, sticky = "ns")
 
         # Content frame (column 1)
-        self.contentFrame = tk.Frame(self.mainWindow, bg = "#aaaaaa")
+        self.contentFrame = tk.Frame(self.mainWindow, bg = "#bbbbbb")
         self.contentFrame.grid(row = 0, column = 1, sticky = "nsew")
 
         #  buttons
@@ -75,39 +76,51 @@ class mainMenu():
 
         self.bellIconSwitch()
 
-        content = tk.Frame(self.contentFrame, bg = "#aaaaaa")
+        content = tk.Frame(self.contentFrame, bg = "#bbbbbb")
         content.grid(row = 1, column = 0, columnspan = 2, sticky = "nw", padx = 20, pady = 20)
 
         tk.Label(content,
                  text = "Welcome!",
                  font = ("Arial", 40),
-                 bg = "#aaaaaa").pack(anchor = "nw")
+                 bg = "#bbbbbb").pack(anchor = "nw")
         tk.Label(content,
                  text = self.username,
                  font = ("Arial", 40),
-                 bg = "#aaaaaa").pack(anchor = "nw")
+                 bg = "#bbbbbb").pack(anchor = "nw")
 
     def generateBill(self):
         self.clearContent()
 
         billFrame = tk.Frame(self.contentFrame, bg = "white", bd = 2, relief = "solid")
         billFrame.grid(row = 0, column = 0, columnspan = 2, padx = 20, pady = 20, sticky = "nsew")
+        
+        billTitle = " --- E P A L C O --- "
 
-        tk.Label(billFrame,
+        billTitle = tk.Label(billFrame,
                  text = "Your Bill",
                  font = ("Arial", 20),
-                 bg = "white").pack(pady = 20)
+                 bg = "#ffffff")
+
+        billTitle.pack(pady = 20)
+
+        billBody = ""
 
 
     def pay(self):
         self.clearContent()
-        tk.Label(self.contentFrame, text = "Pay Page", font = ("Arial", 24), bg = "#aaaaaa").grid(row = 0, column = 0, padx = 20, pady = 20)
+        tk.Label(self.contentFrame, 
+                 text = "Pay Page", 
+                 font = ("Arial", 24), 
+                 bg = "#bbbbbb").grid(row = 0, column = 0, padx = 20, pady = 20)
 
         self.bellIconSwitch()
 
     def viewTransactionHistory(self):
         self.clearContent()
-        tk.Label(self.contentFrame, text = "Transaction History Page", font = ("Arial", 24), bg =  "#aaaaaa").grid(row = 0, column = 0, padx = 20, pady = 20)
+        tk.Label(self.contentFrame, 
+                 text = "Transaction History Page", 
+                 font = ("Arial", 24), 
+                 bg =  "#bbbbbb").grid(row = 0, column = 0, padx = 20, pady = 20)
 
         self.bellIconSwitch()
 
@@ -143,7 +156,7 @@ class mainMenu():
         every time if a notification is available,
         this function gets called every time a user clicks a button
         '''
-        bellFrame = tk.Frame(self.mainWindow, bg = "#aaaaaa")
+        bellFrame = tk.Frame(self.mainWindow, bg = "#bbbbbb")
         bellFrame.grid(row = 0, column = 1, sticky = "ne", padx = 20, pady = 20)
 
         # this serves as a flag to determine if the user has already viewed their notifications or not
@@ -161,10 +174,10 @@ class mainMenu():
         self.bellIcon = ImageTk.PhotoImage(img)  
         tk.Button(bellFrame,
                   image = self.bellIcon,
-                  fg = "#aaaaaa",
-                  bg = "#aaaaaa",
+                  fg = "#bbbbbb",
+                  bg = "#bbbbbb",
                   bd = 0,
-                  activebackground = "#aaaaaa",
+                  activebackground = "#bbbbbb",
                   width = 50,
                   height = 50,
                   command = self.notificationButton).pack()

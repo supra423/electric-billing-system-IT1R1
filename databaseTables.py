@@ -7,7 +7,15 @@ class Database:
     1st table is the main table for the accounts
 
     2nd table is for the notifications when the user
-    clicks on the notification bell icon
+    clicks on the notification bell icon, this basically acts
+    as some sort of "flag"
+
+    3rd table is for transaction history everytime
+    a user pays their bill
+
+    4th table is for the meter readings so that the
+    total kWh consumed the entire month can be determined 
+
     """
     def __init__(self):
 
@@ -45,7 +53,9 @@ class Database:
             (
                 accountNumber TEXT NOT NULL,
                 previousReading INTEGER DEFAULT 0,
-                currentReading INTEGER DEFAULT 0
+                currentReading INTEGER DEFAULT 0,
+                previousReadingDate TEXT DEFAULT 'N/A',
+                currentReadingDate TEXT DEFAULT 'N/A'
             );
             """
         )
