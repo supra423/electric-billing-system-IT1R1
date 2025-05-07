@@ -15,7 +15,6 @@ class Database:
 
     4th table is for the meter readings so that the
     total kWh consumed the entire month can be determined 
-
     """
     def __init__(self):
 

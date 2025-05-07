@@ -90,22 +90,48 @@ class mainMenu():
 
     def generateBill(self):
         self.clearContent()
+        # readings = (previousReading, currentReading, previousReadingDate, currentReadingDate)
+        readings =  self.cursor.execute("select previousReading, currentReading, previousReadingDate, currentReadingDate from readings where accountNumber = ?", (self.accountNumber,)).fetchone()
 
         billFrame = tk.Frame(self.contentFrame, bg = "white", bd = 2, relief = "solid")
         billFrame.grid(row = 0, column = 0, columnspan = 2, padx = 20, pady = 20, sticky = "nsew")
         
-        billTitle = " --- E P A L C O --- "
-
         billTitle = tk.Label(billFrame,
-                 text = "Your Bill",
+                 text = " --- E P A L C O ---",
                  font = ("Arial", 20),
                  bg = "#ffffff")
 
         billTitle.pack(pady = 20)
 
-        billBody = ""
+        # rate
+        # due date
+        # previous reading - current reading
+        # billing period
+        # Address
+        # total paymment
 
 
+        # readings = (previousReading, currentReading, previousReadingDate, currentReadingDate)
+        totalKwhUsage = readings[1] - readings[0]
+
+        # text widget
+        billBody = tk.Label(billFrame,
+                            text = f"""
+Name: {self.username}
+Previous reading - Current reading: {readings[0]} - {readings[1]}
+Billing period: {readings[2]} - {readings[3]}
+Address: {self.address}
+
+total kWh usage: {totalKwhUsage}
+Rate: Php10.00
+
+Total payment: Php{totalKwhUsage * 10:.2f}
+
+""",
+                            font = ("Arial", 12),
+                            bg = "#ffffff")
+
+        billBody.pack()
     def pay(self):
         self.clearContent()
         tk.Label(self.contentFrame, 
