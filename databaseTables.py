@@ -32,7 +32,7 @@ class Database:
                 address TEXT NOT NULL,
                 kWh INTEGER DEFAULT 0,
                 paymentStatus TEXT DEFAULT 'paid',
-                accountStatus TEXT DEFAULT 'active'
+                pendingBalance INTEGER DEFAULT 0
             );
 
             CREATE TABLE IF NOT EXISTS notifications

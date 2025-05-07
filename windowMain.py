@@ -91,7 +91,7 @@ class mainMenu():
     def generateBill(self):
         self.clearContent()
         # readings = (previousReading, currentReading, previousReadingDate, currentReadingDate)
-        readings =  self.cursor.execute("select previousReading, currentReading, previousReadingDate, currentReadingDate, dueDate from readings where accountNumber = ?", (self.accountNumber,)).fetchone()
+        readings = self.cursor.execute("select previousReading, currentReading, previousReadingDate, currentReadingDate, dueDate from readings where accountNumber = ?", (self.accountNumber,)).fetchone()
 
         billFrame = tk.Frame(self.contentFrame, bg = "white", bd = 2, relief = "solid")
         billFrame.grid(row = 0, column = 0, columnspan = 2, padx = 20, pady = 20, sticky = "nsew")
@@ -103,20 +103,15 @@ class mainMenu():
 
         billTitle.pack(pady = 20)
 
-        # rate
-        # due date
-        # previous reading - current reading
-        # billing period
-        # Address
-        # total paymment
         textFont = ("Arial", 14)
 
         billBody = tk.Text(billFrame, height = 15, width = 50, font = textFont)
         billBody.pack()
 
-        totalPaymentWithoutVat = 10 * (readings[1] - readings[0])
-        addVat = totalPaymentWithoutVat * 0.12
-        totalPaymentWithVat = addVat + totalPaymentWithoutVat
+        #totalPaymentWithoutVat = 10 * (readings[1] - readings[0])
+        #addVat = totalPaymentWithoutVat * 0.12
+        #totalPaymentWithVat = addVat + totalPaymentWithoutVat
+
 
         billBody.insert('1.0', f"Name: {self.username}\n")
         billBody.insert('2.0', f"Address: {self.address}\n\n")
@@ -126,9 +121,9 @@ class mainMenu():
         billBody.insert('8.0', f"Due date: {readings[4]}\n")
         billBody.insert('9.0', f"Rate: ₱10/kWh\n")
         billBody.insert('10.0', f"Value-added Tax (VAT): 12%\n")
-        billBody.insert('11.0', f"Total payment without VAT: ₱{totalPaymentWithoutVat:.2f}\n")
-        billBody.insert('12.0', f"Add VAT: {addVat:.2f}\n")
-        billBody.insert('13.0', f"Total amount due: ₱{totalPaymentWithVat:.2f}\n")
+        #billBody.insert('11.0', f"Total payment without VAT: ₱{totalPaymentWithoutVat:.2f}\n")
+        #billBody.insert('12.0', f"Add VAT: {addVat:.2f}\n")
+        #billBody.insert('13.0', f"Total amount due: ₱{totalPaymentWithVat:.2f}\n")
 
         billBody.config(state = 'disabled')
 
