@@ -1,6 +1,6 @@
 import sqlite3
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 import schedule
 
 def job():
@@ -12,16 +12,18 @@ def job():
 
     accountFetch1 = cursor.execute("select accountNumber, previousReading, currentReading, previousReadingDate, currentReadingDate from readings").fetchall()
 
-    timeStamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timeStamp = datetime.now().strftime("%B %d, %Y")
+    billDueDate = datetime.now() + timedelta(days = 15)
+    formattedDueDate = billDueDate.strftime("%B %d, %Y")
 
-    # for example, row = ('1234123412341234', 123, 400, "date", "date")
+    # for example, row = ('1234123412341234', 123, 400, "date", "date", "dueDate")
     for row1 in accountFetch1:
         cursor.execute("update readings set previousReading = ?, previousReadingDate = ? where accountNumber = ?", (row1[2], row1[4], row1[0]))
 
     accountFetch2 = cursor.execute("select accountNumber, kWh from accounts").fetchall()
 
     for row2 in  accountFetch2:
-        cursor.execute("update readings set currentReading = ?, currentReadingDate = ? where accountNumber = ?", (row2[1], timeStamp, row2[0]))
+        cursor.execute("update readings set currentReading = ?, currentReadingDate = ?, dueDate = ? where accountNumber = ?", (row2[1], timeStamp, formattedDueDate, row2[0]))
 
     connection.commit()
 

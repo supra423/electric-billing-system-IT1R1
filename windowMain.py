@@ -91,14 +91,14 @@ class mainMenu():
     def generateBill(self):
         self.clearContent()
         # readings = (previousReading, currentReading, previousReadingDate, currentReadingDate)
-        readings =  self.cursor.execute("select previousReading, currentReading, previousReadingDate, currentReadingDate from readings where accountNumber = ?", (self.accountNumber,)).fetchone()
+        readings =  self.cursor.execute("select previousReading, currentReading, previousReadingDate, currentReadingDate, dueDate from readings where accountNumber = ?", (self.accountNumber,)).fetchone()
 
         billFrame = tk.Frame(self.contentFrame, bg = "white", bd = 2, relief = "solid")
         billFrame.grid(row = 0, column = 0, columnspan = 2, padx = 20, pady = 20, sticky = "nsew")
         
         billTitle = tk.Label(billFrame,
                  text = " --- E P A L C O ---",
-                 font = ("Arial", 20),
+                 font = ("Arial", 20, 'italic'),
                  bg = "#ffffff")
 
         billTitle.pack(pady = 20)
@@ -109,29 +109,23 @@ class mainMenu():
         # billing period
         # Address
         # total paymment
+        textFont = ("Arial", 14)
 
+        billTitle = tk.Text(billFrame, height = 10, width = 50, font = textFont)
+        billTitle.pack()
 
-        # readings = (previousReading, currentReading, previousReadingDate, currentReadingDate)
-        totalKwhUsage = readings[1] - readings[0]
+        totalPayment = 10 * (readings[1] - readings[0])
 
-        # text widget
-        billBody = tk.Label(billFrame,
-                            text = f"""
-Name: {self.username}
-Previous reading - Current reading: {readings[0]} - {readings[1]}
-Billing period: {readings[2]} - {readings[3]}
-Address: {self.address}
+        billTitle.insert('1.0', f"Name: {self.username}\n")
+        billTitle.insert('2.0', f"Address: {self.address}\n\n")
+        billTitle.insert('4.0', f"Billing period: {readings[2]} - {readings[3]}\n")
+        billTitle.insert('5.0', f"Previous reading - current reading (kWh): {readings[0]} - {readings[1]}\n")
+        billTitle.insert('6.0', f"Total kWh usage: {readings[1] - readings[0]}\n\n")
+        billTitle.insert('8.0', f"Rate: Php10\n")
+        billTitle.insert('9.0', f"Total Payment: {totalPayment:.2f}\n")
 
-total kWh usage: {totalKwhUsage}
-Rate: Php10.00
+        billTitle.config(state = 'disabled')
 
-Total payment: Php{totalKwhUsage * 10:.2f}
-
-""",
-                            font = ("Arial", 12),
-                            bg = "#ffffff")
-
-        billBody.pack()
     def pay(self):
         self.clearContent()
         tk.Label(self.contentFrame, 

@@ -54,7 +54,8 @@ class Database:
                 previousReading INTEGER DEFAULT 0,
                 currentReading INTEGER DEFAULT 0,
                 previousReadingDate TEXT DEFAULT 'N/A',
-                currentReadingDate TEXT DEFAULT 'N/A'
+                currentReadingDate TEXT DEFAULT 'N/A',
+                dueDate TEXT DEFAULT 'N/A'
             );
             """
         )
