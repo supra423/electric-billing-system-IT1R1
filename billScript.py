@@ -3,8 +3,8 @@ import time
 from datetime import datetime, timedelta
 import schedule
 
-def job():
-    if datetime.now().day != 7:
+def job1():
+    if datetime.now().day != 20:
         return
 
     connection = sqlite3.connect('database.s3db')
@@ -19,13 +19,7 @@ def job():
     # for example, row1 = ('1234123412341234', 123, 400, "date", "date", "dueDate")
     for row1 in accountFetch1:
         cursor.execute("update readings set previousReading = ?, previousReadingDate = ? where accountNumber = ?", (row1[2], row1[4], row1[0]))
-
-        # 10 pesos per kWh and 12% value added tax
-        totalPaymentWithoutVat = 10 * (row1[2] - row1[1])
-        addVat = totalPaymentWithoutVat * 0.12
-        totalPaymentWithVat = addVat + totalPaymentWithoutVat
-        
-        cursor.execute("update accounts set pendingBalance = pendingBalance + ? where accountNumber = ?", (totalPaymentWithVat, row1[0]))
+    
 
     accountFetch2 = cursor.execute("select accountNumber, kWh from accounts").fetchall()
 
@@ -34,7 +28,27 @@ def job():
 
     connection.commit()
 
-schedule.every().day.at("00:00").do(job)
+def job2():
+    if datetime.now().day != 21:
+        return
+
+    connection = sqlite3.connect('database.s3db')
+    cursor = connection.cursor()
+
+    pendingBalanceCalculate = cursor.execute("select accountNumber, previousReading, currentReading from readings").fetchall()
+
+    for reading in pendingBalanceCalculate:
+        # 10 pesos per kWh and 12% value added tax
+        totalPaymentWithoutVat = 10 * (reading[2] - reading[1])
+        addVat = totalPaymentWithoutVat * 0.12
+        totalPaymentWithVat = addVat + totalPaymentWithoutVat
+        
+        cursor.execute("update accounts set pendingBalance = pendingBalance + ? where accountNumber = ?", (totalPaymentWithVat, reading[0]))
+    
+    connection.commit()
+
+schedule.every().day.at("00:00").do(job1)
+schedule.every().day.at("00:00").do(job2)
 
 while True:
     schedule.run_pending()

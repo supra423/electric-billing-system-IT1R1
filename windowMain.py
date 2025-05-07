@@ -112,7 +112,6 @@ class mainMenu():
         #addVat = totalPaymentWithoutVat * 0.12
         #totalPaymentWithVat = addVat + totalPaymentWithoutVat
 
-
         billBody.insert('1.0', f"Name: {self.username}\n")
         billBody.insert('2.0', f"Address: {self.address}\n\n")
         billBody.insert('4.0', f"Billing period: {readings[2]} - {readings[3]}\n")
