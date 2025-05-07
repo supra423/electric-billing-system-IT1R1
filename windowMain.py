@@ -111,20 +111,26 @@ class mainMenu():
         # total paymment
         textFont = ("Arial", 14)
 
-        billTitle = tk.Text(billFrame, height = 10, width = 50, font = textFont)
-        billTitle.pack()
+        billBody = tk.Text(billFrame, height = 15, width = 50, font = textFont)
+        billBody.pack()
 
-        totalPayment = 10 * (readings[1] - readings[0])
+        totalPaymentWithoutVat = 10 * (readings[1] - readings[0])
+        addVat = totalPaymentWithoutVat * 0.12
+        totalPaymentWithVat = addVat + totalPaymentWithoutVat
 
-        billTitle.insert('1.0', f"Name: {self.username}\n")
-        billTitle.insert('2.0', f"Address: {self.address}\n\n")
-        billTitle.insert('4.0', f"Billing period: {readings[2]} - {readings[3]}\n")
-        billTitle.insert('5.0', f"Previous reading - current reading (kWh): {readings[0]} - {readings[1]}\n")
-        billTitle.insert('6.0', f"Total kWh usage: {readings[1] - readings[0]}\n\n")
-        billTitle.insert('8.0', f"Rate: Php10\n")
-        billTitle.insert('9.0', f"Total Payment: {totalPayment:.2f}\n")
+        billBody.insert('1.0', f"Name: {self.username}\n")
+        billBody.insert('2.0', f"Address: {self.address}\n\n")
+        billBody.insert('4.0', f"Billing period: {readings[2]} - {readings[3]}\n")
+        billBody.insert('5.0', f"Previous reading - current reading (kWh): {readings[0]} - {readings[1]}\n")
+        billBody.insert('6.0', f"Total kWh usage: {readings[1] - readings[0]}\n\n")
+        billBody.insert('8.0', f"Due date: {readings[4]}\n")
+        billBody.insert('9.0', f"Rate: ₱10/kWh\n")
+        billBody.insert('10.0', f"Value-added Tax (VAT): 12%\n")
+        billBody.insert('11.0', f"Total payment without VAT: ₱{totalPaymentWithoutVat:.2f}\n")
+        billBody.insert('12.0', f"Add VAT: {addVat:.2f}\n")
+        billBody.insert('13.0', f"Total amount due: ₱{totalPaymentWithVat:.2f}\n")
 
-        billTitle.config(state = 'disabled')
+        billBody.config(state = 'disabled')
 
     def pay(self):
         self.clearContent()
@@ -201,6 +207,3 @@ class mainMenu():
                   width = 50,
                   height = 50,
                   command = self.notificationButton).pack()
-    
-    def passFunction(self):
-        pass
