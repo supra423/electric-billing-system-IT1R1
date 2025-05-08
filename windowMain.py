@@ -145,9 +145,9 @@ class mainMenu():
         self.bellIconSwitch()
 
     def logout(self):
-        from loginWindow import accountLogin
+        from loginWindow import loginWindow
         self.mainWindow.destroy()
-        accountLogin()
+        loginWindow()
 
     def clearContent(self):
         '''
