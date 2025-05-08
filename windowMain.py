@@ -93,6 +93,20 @@ class mainMenu():
         # readings = (previousReading, currentReading, previousReadingDate, currentReadingDate)
         readings = self.cursor.execute("select previousReading, currentReading, previousReadingDate, currentReadingDate, dueDate from readings where accountNumber = ?", (self.accountNumber,)).fetchone()
 
+        balance = self.cursor.execute("select paymentThisBillingPeriod, pendingBalance from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
+        
+        totalKwhUsage = readings[1] - readings[0]
+
+        # look, if you are seeing this, I think it is better practice if I should just create two new
+        # column in the accounts table for the total payment without the VAT and the added VAT
+        # and I just fetch them, but instead, I'm just gonna calculate them within this function,
+        # I'm kinda lazy tho lol.
+        # if you are seeing this
+        # I request for you to do this for me in the future.
+
+        totalPaymentWithoutVat = totalKwhUsage * 10
+        addVat = totalPaymentWithoutVat * 0.12
+
         billFrame = tk.Frame(self.contentFrame, bg = "white", bd = 2, relief = "solid")
         billFrame.grid(row = 0, column = 0, columnspan = 2, padx = 20, pady = 20, sticky = "nsew")
         
@@ -105,24 +119,22 @@ class mainMenu():
 
         textFont = ("Arial", 14)
 
-        billBody = tk.Text(billFrame, height = 15, width = 50, font = textFont)
+        billBody = tk.Text(billFrame, height = 17, width = 50, font = textFont)
         billBody.pack()
-
-        #totalPaymentWithoutVat = 10 * (readings[1] - readings[0])
-        #addVat = totalPaymentWithoutVat * 0.12
-        #totalPaymentWithVat = addVat + totalPaymentWithoutVat
 
         billBody.insert('1.0', f"Name: {self.username}\n")
         billBody.insert('2.0', f"Address: {self.address}\n\n")
         billBody.insert('4.0', f"Billing period: {readings[2]} - {readings[3]}\n")
         billBody.insert('5.0', f"Previous reading - current reading (kWh): {readings[0]} - {readings[1]}\n")
-        billBody.insert('6.0', f"Total kWh usage: {readings[1] - readings[0]}\n\n")
+        billBody.insert('6.0', f"Total kWh usage: {totalKwhUsage}\n\n")
         billBody.insert('8.0', f"Due date: {readings[4]}\n")
         billBody.insert('9.0', f"Rate: ₱10/kWh\n")
         billBody.insert('10.0', f"Value-added Tax (VAT): 12%\n")
-        #billBody.insert('11.0', f"Total payment without VAT: ₱{totalPaymentWithoutVat:.2f}\n")
-        #billBody.insert('12.0', f"Add VAT: {addVat:.2f}\n")
-        #billBody.insert('13.0', f"Total amount due: ₱{totalPaymentWithVat:.2f}\n")
+        billBody.insert('11.0', f"Total payment without VAT: ₱{totalPaymentWithoutVat:.2f}\n")
+        billBody.insert('12.0', f"Added VAT: ₱{addVat:.2f}\n")
+        billBody.insert('13.0', f"Total Payment this billing period: ₱{balance[0]:.2f}\n\n")
+
+        billBody.insert('15.0', f"TOTAL PENDING BALANCE: ₱{balance[1]:.2f}\n")
 
         billBody.config(state = 'disabled')
 

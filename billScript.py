@@ -43,7 +43,8 @@ def job2():
         addVat = totalPaymentWithoutVat * 0.12
         totalPaymentWithVat = addVat + totalPaymentWithoutVat
         
-        cursor.execute("update accounts set pendingBalance = pendingBalance + ? where accountNumber = ?", (totalPaymentWithVat, reading[0]))
+        # pendingBalance gets appended, while paymentThisBillingPeriod gets overwritten 
+        cursor.execute("update accounts set pendingBalance = pendingBalance + ?, paymentThisBillingPeriod = ? where accountNumber = ?", (totalPaymentWithVat, totalPaymentWithVat,reading[0]))
     
     connection.commit()
 
