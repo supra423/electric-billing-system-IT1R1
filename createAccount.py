@@ -67,16 +67,6 @@ class createAccount():
                 messagebox.showinfo('Error!', 'Password confirmation is incorrect!')
                 return
             
-            installationFee = float(installationFee)
-
-            if installationFee < 5000:
-                messagebox.showinfo("Invalid payment!", "Please pay the proper amount!")
-                return
-            elif installationFee > 5000:
-                messagebox.showinfo("Change", f"Here is your change: {installationFee - 5000:.2f}")
-            else:
-                pass
-
             accountFetch = self.cursor.execute("select accountNumber from accounts where accountNumber = ?",
                                                     (newAccountNumber,)).fetchone()
             if accountFetch:
@@ -86,6 +76,18 @@ class createAccount():
             if len(newAccountNumber) != 16:
                 messagebox.showinfo('Error!', 'Account number must be 16-digits')
                 return
+            
+            if not newAccountNumber.isdigit():
+                messagebox.showinfo('Error!', 'Account number must all be digits!')
+                return
+
+            installationFee = float(installationFee)
+
+            if installationFee < 5000:
+                messagebox.showinfo("Invalid payment!", "Please pay the proper amount!")
+                return
+            elif installationFee > 5000:
+                messagebox.showinfo("Change", f"Here is your change: {installationFee - 5000:.2f}")
 
             self.cursor.execute("insert into accounts(name, accountNumber, password, address) values(?, ?, ?, ?)", 
                                 (newName, newAccountNumber, newPassword, newHomeAddress))
@@ -101,7 +103,7 @@ class createAccount():
 
         except Exception as e:
             messagebox.showinfo("Error!", "Error, please try again!\n")        
-            print(e)            
+            print(e)
     def labelAndEntry(self, whichWindow, showEntry, labelText, fontSize):
         '''
         just a helper function to reduce the amount of lines

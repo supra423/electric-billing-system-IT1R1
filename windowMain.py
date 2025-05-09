@@ -75,6 +75,7 @@ class mainMenu():
         self.clearContent()
 
         self.bellIconSwitch()
+        kwhRead = self.cursor.execute("select kWh from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
 
         content = tk.Frame(self.contentFrame, bg = "#bbbbbb")
         content.grid(row = 1, column = 0, columnspan = 2, sticky = "nw", padx = 20, pady = 20)
@@ -87,6 +88,11 @@ class mainMenu():
                  text = self.username,
                  font = ("Arial", 40),
                  bg = "#bbbbbb").pack(anchor = "nw")
+
+        tk.Label(content,
+                 text = f"Electricity meter: {kwhRead[0]} kWh",
+                 font = ("Arial", 30),
+                 bg = "#bbbbbb").pack(anchor = "nw", pady = 20)
 
     def generateBill(self):
         self.clearContent()
@@ -138,6 +144,7 @@ class mainMenu():
 
         billBody.config(state = 'disabled')
 
+        self.bellIconSwitch()
     def pay(self):
         self.clearContent()
         tk.Label(self.contentFrame, 

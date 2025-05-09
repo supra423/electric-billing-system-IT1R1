@@ -16,21 +16,14 @@ class loginWindow():
         self.loginWindow.resizable(False, False)
         self.loginWindow.configure(bg = "#bbbbbb")
 
-        #tk.Label(self.loginWindow, 
-                #text = "Welcome!", 
-                #width = 10, 
-                #height = 3, 
-                #font = ("Arial", 30),
-                #bg = "#bbbbbb").pack()
-
-        welcomeFrame = tk.Frame(self.loginWindow, bg="#bbbbbb")
-        welcomeFrame.pack(fill="x", pady=10)
+        welcomeFrame = tk.Frame(self.loginWindow, bg = "#bbbbbb")
+        welcomeFrame.pack(fill = "x", pady = 10)
 
         tk.Label(welcomeFrame, 
-                text="Welcome!", 
-                font=("Arial", 30), 
-                bg="yellow", 
-                anchor="center").pack(fill="x", pady=(40, 20))
+                text = "Welcome!", 
+                font = ("Arial", 30), 
+                bg = "#bbbbbb", 
+                anchor = "center").pack(fill = "x", pady = (40, 20))
             
 
         self.accountNumberEntry = self.labelAndEntry(self.loginWindow, True, "Enter account number:", 20)
@@ -75,28 +68,18 @@ class loginWindow():
                     messagebox.showinfo('Error!', errorTuple[1])
                     return
 
+            accountExists = self.cursor.execute("SELECT name, accountNumber, address, password FROM accounts WHERE accountNumber = ?", (accountNumber,)).fetchone()
 
-            accountExists = self.cursor.execute("SELECT password, name, accountNumber, address FROM accounts WHERE accountNumber = ?", (accountNumber,)).fetchone()
-#                accountFetch = self.cursor.execute("select name, accountNumber, address from accounts where accountNumber = ? and password = ?",
-#                                               (accountNumber, password)).fetchone()
-
-            if not accountExists: ## ADDED
+            if not accountExists:
                 messagebox.showinfo('Error!', 'That account does not exist!') ## ADDED
-                return ## ADDED
-#            if accountFetch:
-#                self.loginWindow.destroy()
-#                mainMenu(accountFetch)
-#            else:
-#                messagebox.showinfo('Error!', 'That account does not exist!')
+                return 
 
-            storedPassword, name, accNumberDB, address = accountExists ## ADDED
-
-            if storedPassword != password: ## ADDED
+            if password != accountExists[3]: ## ADDED
                 messagebox.showinfo('Error!', 'Incorrect password!') ## ADDED
-                return ## ADDED
+                return
             
-            self.loginWindow.destroy() ## ADDED
-            mainMenu((name, accNumberDB, address)) ## ADDED
+            self.loginWindow.destroy()
+            mainMenu((accountExists))
 
         except Exception as e:
             messagebox.showinfo("Error!", "Error, please try again!")
