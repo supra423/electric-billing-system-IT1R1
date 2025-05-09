@@ -99,16 +99,9 @@ class mainMenu():
         # readings = (previousReading, currentReading, previousReadingDate, currentReadingDate)
         readings = self.cursor.execute("select previousReading, currentReading, previousReadingDate, currentReadingDate, dueDate from readings where accountNumber = ?", (self.accountNumber,)).fetchone()
 
-        balance = self.cursor.execute("select paymentThisBillingPeriod, pendingBalance from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
+        balance = self.cursor.execute("select paymentLastBillingPeriod, paymentThisBillingPeriod, pendingBalance from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
         
         totalKwhUsage = readings[1] - readings[0]
-
-        # look, if you are seeing this, I think it is better practice if I should just create two new
-        # column in the accounts table for the total payment without the VAT and the added VAT
-        # and I just fetch them, but instead, I'm just gonna calculate them within this function,
-        # I'm kinda lazy tho lol.
-        # if you are seeing this
-        # I request for you to do this for me in the future.
 
         totalPaymentWithoutVat = totalKwhUsage * 10
         addVat = totalPaymentWithoutVat * 0.12
@@ -137,10 +130,10 @@ class mainMenu():
         billBody.insert('9.0', f"Rate: ₱10/kWh\n")
         billBody.insert('10.0', f"Value-added Tax (VAT): 12%\n")
         billBody.insert('11.0', f"Total payment without VAT: ₱{totalPaymentWithoutVat:.2f}\n")
-        billBody.insert('12.0', f"Added VAT: ₱{addVat:.2f}\n")
-        billBody.insert('13.0', f"Total Payment this billing period: ₱{balance[0]:.2f}\n\n")
-
-        billBody.insert('15.0', f"TOTAL PENDING BALANCE: ₱{balance[1]:.2f}\n")
+        billBody.insert('12.0', f"Added VAT: ₱{addVat:.2f}\n\n")
+        billBody.insert('14.0', f"Total Payment last billing period: ₱{balance[0]}\n")
+        billBody.insert('15.0', f"Total Payment this billing period: ₱{balance[1]:.2f}\n\n")
+        billBody.insert('17.0', f"TOTAL PENDING BALANCE: ₱{balance[2]:.2f}\n")
 
         billBody.config(state = 'disabled')
 

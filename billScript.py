@@ -13,7 +13,7 @@ def job1():
     accountFetch1 = cursor.execute("select accountNumber, previousReading, currentReading, previousReadingDate, currentReadingDate from readings").fetchall()
 
     timeStamp = datetime.now().strftime("%B %d, %Y")
-    billDueDate = datetime.now() + timedelta(days = 15)
+    billDueDate = datetime.now() + timedelta(days = 10)
     formattedDueDate = billDueDate.strftime("%B %d, %Y")
 
     # for example, row1 = ('1234123412341234', 123, 400, "date", "date", "dueDate")
@@ -49,7 +49,7 @@ def job2():
     connection.commit()
 
 schedule.every().day.at("00:00").do(job1)
-schedule.every().day.at("00:00").do(job2)
+schedule.every().day.at("00:01").do(job2)
 
 while True:
     schedule.run_pending()
