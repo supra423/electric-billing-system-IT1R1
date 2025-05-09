@@ -126,7 +126,7 @@ class mainMenu():
         billBody.insert('4.0', f"Billing period: {readings[2]} - {readings[3]}\n")
         billBody.insert('5.0', f"Previous reading - current reading (kWh): {readings[0]} - {readings[1]}\n")
         billBody.insert('6.0', f"Total kWh usage: {totalKwhUsage}\n\n")
-        billBody.insert('8.0', f"Due date: {readings[4]}\n")
+        billBody.insert('8.0', f"PAY BEFORE: {readings[4]}\n")
         billBody.insert('9.0', f"Rate: ₱10/kWh\n")
         billBody.insert('10.0', f"Value-added Tax (VAT): 12%\n")
         billBody.insert('11.0', f"Total payment without VAT: ₱{totalPaymentWithoutVat:.2f}\n")

@@ -36,12 +36,13 @@ def job1():
     for row in accountFetch:
         # basically, using the account numbers of rows that don't contain a 'N/A' dueDate
         # we will check each account using there accountNumber if their paymentStatus is 'paid' or 'unpaid'
-        userPaymentStatusAndPayment = cursor.execute("select paymentStatus, paymentThisBillingPeriod from accounts where accountNumber = ?", (row[0],)).fetchone()
+        userPaymentStatusAndPayment = cursor.execute("select paymentStatus, paymentThisBillingPeriod, pendingBalance from accounts where accountNumber = ?", (row[0],)).fetchone()
         
         if userPaymentStatusAndPayment[0] == 'unpaid':
             # this is to determine the actual payment made last month
+            paymentLastMonth = userPaymentStatusAndPayment[2] - userPaymentStatusAndPayment[1]
 
-            cursor.execute("update accounts set paymentLastBillingPeriod = ? where accountNumber = ?", (userPaymentStatusAndPayment[1], row[0])) 
+            cursor.execute("update accounts set paymentLastBillingPeriod = ? where accountNumber = ?", (paymentLastMonth, row[0])) 
 
     connection.commit()
 

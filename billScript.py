@@ -18,13 +18,25 @@ def job1():
 
     # for example, row1 = ('1234123412341234', 123, 400, "date", "date", "dueDate")
     for row1 in accountFetch1:
-        cursor.execute("update readings set previousReading = ?, previousReadingDate = ? where accountNumber = ?", (row1[2], row1[4], row1[0]))
+        
+        # first check the account if it is terminated or not
+        accountStatusCheck1 = cursor.execute("select accountStatus from accounts where accountNumber = ?", (row1[0],)).fetchone()
     
+        if accountStatusCheck1[0] == 'active':
+            cursor.execute("update readings set previousReading = ?, previousReadingDate = ? where accountNumber = ?", (row1[2], row1[4], row1[0]))
+        else:
+            continue
 
     accountFetch2 = cursor.execute("select accountNumber, kWh from accounts").fetchall()
 
     for row2 in  accountFetch2:
-        cursor.execute("update readings set currentReading = ?, currentReadingDate = ?, dueDate = ? where accountNumber = ?", (row2[1], timeStamp, formattedDueDate, row2[0]))
+
+        accountStatusCheck2 = cursor.execute("select accountStatus from accounts where accountNumber = ?", (row2[0],)).fetchone()
+
+        if accountStatusCheck2[0] == 'active':
+            cursor.execute("update readings set currentReading = ?, currentReadingDate = ?, dueDate = ? where accountNumber = ?", (row2[1], timeStamp, formattedDueDate, row2[0]))
+        else:
+            continue
 
     connection.commit()
 

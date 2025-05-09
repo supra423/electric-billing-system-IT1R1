@@ -7,7 +7,7 @@ import schedule
 def job():
     connection = sqlite3.connect('database.s3db')
     cursor = connection.cursor()
-    accountFetch = cursor.execute("select accountNumber, kWh from accounts").fetchall()
+    accountFetch = cursor.execute("select accountNumber, kWh from accounts where accountStatus != 'terminated'").fetchall()
 
     for row in accountFetch:
         addKwh = random.randrange(10, 30)
