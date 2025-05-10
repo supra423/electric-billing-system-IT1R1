@@ -2,8 +2,6 @@ import sqlite3
 import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
-
-
 class mainMenu():
 
     def __init__(self, user):
@@ -74,7 +72,6 @@ class mainMenu():
     def mainPage(self):
         self.clearContent()
 
-        self.bellIconSwitch()
         kwhRead = self.cursor.execute("select kWh from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
 
         content = tk.Frame(self.contentFrame, bg = "#bbbbbb")
@@ -94,6 +91,7 @@ class mainMenu():
                  font = ("Arial", 30),
                  bg = "#bbbbbb").pack(anchor = "nw", pady = 20)
 
+        self.bellIconSwitch()
     def generateBill(self):
         self.clearContent()
         # readings = (previousReading, currentReading, previousReadingDate, currentReadingDate)
@@ -138,15 +136,48 @@ class mainMenu():
         billBody.config(state = 'disabled')
 
         self.bellIconSwitch()
+
     def pay(self):
+
+        balance = self.cursor.execute("select pendingBalance, paymentLastBillingPeriod from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
+
         self.clearContent()
-        tk.Label(self.contentFrame, 
-                 text = "Pay Page", 
-                 font = ("Arial", 24), 
-                 bg = "#bbbbbb").grid(row = 0, column = 0, padx = 20, pady = 20)
+
+        self.payLabelHelperFunction(tk.Label, "Pay Page", 24, "#bbbbbb", 0, False)
+        self.payLabelHelperFunction(tk.Label, "You have two options when paying:", 20, "#bbbbbb", 1, False)
+        self.payLabelHelperFunction(tk.Label, f"Pay all pending balance: ₱{balance[0]}", 20, "#bbbbbb", 2, False)
+
+        self.payLabelHelperFunction(tk.Button, "Pay all pending balance", 14, "#ababab", 3, True, lambda: self.buttonPayFunction("payAll"))
+
+        self.payLabelHelperFunction(tk.Label, f"Pay only last month's bill (Ignore if ₱0.00): ₱{balance[1]}", 20, "#bbbbbb", 4, False)
+
+        self.payLabelHelperFunction(tk.Button, "Pay only last month's bill", 14, "#ababab", 5, True, lambda: self.buttonPayFunction("payOnlyLast"))
 
         self.bellIconSwitch()
 
+    def payLabelHelperFunction(self, labelOrButton, labelText, fontSize, bgColor, whichRow, buttonCommandBool, buttonPay = None):
+        """
+        helper function just to reduce some lines :)
+        """
+
+        if buttonCommandBool == False:
+            labelOrButton(self.contentFrame,
+                    text = labelText,
+                    font = ("Arial", fontSize),
+                    bg = bgColor).grid(row = whichRow, column = 0, padx = 5, pady = 5, sticky = "w")
+        else:
+            labelOrButton(self.contentFrame,
+                    text = labelText,
+                    font = ("Arial", fontSize),
+                    bg = bgColor,
+                    command = buttonPay).grid(row = whichRow, column = 0, padx = 5, pady = 5, sticky = "w")
+    ###
+    def buttonPayFunction(self, choice):
+        payWindow = tk.Toplevel()
+        payWindow.title(f"{choice}")
+        payWindow.geometry("400x300")
+        payWindow.resizable(False, False)
+    ###
     def viewTransactionHistory(self):
         self.clearContent()
         tk.Label(self.contentFrame, 
