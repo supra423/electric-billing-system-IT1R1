@@ -131,8 +131,8 @@ class mainMenu():
         billBody.insert('10.0', f"Value-added Tax (VAT): 12%\n")
         billBody.insert('11.0', f"Total payment without VAT: ₱{totalPaymentWithoutVat:.2f}\n")
         billBody.insert('12.0', f"Added VAT: ₱{addVat:.2f}\n\n")
-        billBody.insert('14.0', f"Total Payment last billing period: ₱{balance[0]}\n")
-        billBody.insert('15.0', f"Total Payment this billing period: ₱{balance[1]:.2f}\n\n")
+        billBody.insert('14.0', f"Total Payment this billing period: ₱{balance[1]:.2f}\n")
+        billBody.insert('15.0', f"Unpaid balance last billing period (Ignore if ₱0.00): ₱{balance[0]}\n\n")
         billBody.insert('17.0', f"TOTAL PENDING BALANCE: ₱{balance[2]:.2f}\n")
 
         billBody.config(state = 'disabled')
