@@ -5,24 +5,56 @@ import schedule
 
 '''
 To make things clear, this script has 2 functions.
-the first function (job1) basically checks if the user has paid
-before the due date (by checking the payment status if it is 'paid' or 'unpaid'), 
-if not, the paymentLastBillingPeriod column will get assigned with
-paymentThisBillingPeriod, this signifies that the user still has not paid last month's
-bill
 
-the second function (job2) also runs almost the same time as the first function but instead, 
+the second function (job1) runs in the recorded dueDate 
 what it does is that it not only checks the paymentStatus of each user but also check if the user has
 unpaid balance from last month's bill by checking if the paymentLastBillingPeriod is greater than 0
 meaning that they haven't paid for straight 2 billing periods. If such a user exists, give them 2 days
 to comply by marking them as 'almost terminated' before marking their account as 
 'terminated' which basically just 'freezes the account'
 
+
+the second function (job2) basically checks if the user has paid
+before the due date (by checking the payment status if it is 'paid' or 'unpaid'), 
+if not, the paymentLastBillingPeriod column will get assigned with
+paymentThisBillingPeriod, this signifies that the user still has not paid last month's
+bill
+
+the third function basically checks if there is still a user with the 'almost terminated' status,
+if such a user exists and it is already past the disconnection date, then mark that user as 'terminated'
+
 these functions basically run everyday trying to check if it is the due date or if it is the disconnectionDate
 (disconnectionDate is basically the 48 hour last chance given to the user to comply a payment)
 '''
 
 def job1():
+    connection = sqlite3.connect('database.s3db')
+    cursor = connection.cursor()
+   
+    sampleRow = cursor.execute("select dueDate from readings where dueDate != 'N/A'").fetchone()
+
+    if sampleRow is None:
+        return
+
+    dateObject = datetime.strptime(sampleRow[0], "%B %d, %Y")
+    currentDatetime = datetime.now().strftime("%B %d, %Y")
+
+    newDate = dateObject + timedelta(days = 3)
+    newDateFormatted = newDate.strftime("%B %d, %Y")
+ 
+    if sampleRow[0] != currentDatetime:
+        return
+
+    accountFetch = cursor.execute("select accountNumber from accounts where paymentStatus = 'unpaid' AND paymentLastBillingPeriod != 0 AND paymentThisBillingPeriod != 0 AND paidLastMonth = 'false'").fetchall()
+
+    for row in accountFetch:
+
+        accountAlmostTermination = cursor.execute("update accounts set accountStatus = 'almost terminated' where accountNumber = ?", (row[0],))
+        accountDisconnectionDateUpdate = cursor.execute("update readings set disconnectionDate = ? where accountNumber = ?", (newDateFormatted, row[0]))
+
+    connection.commit()
+
+def job2():
     connection = sqlite3.connect('database.s3db')
     cursor = connection.cursor()
 
@@ -51,37 +83,11 @@ def job1():
         
         if userPaymentStatusAndPayment[0] == 'unpaid':
 
-            cursor.execute("update accounts set paymentLastBillingPeriod = ? where accountNumber = ?", (userPaymentStatusAndPayment[1], row[0])) 
+            cursor.execute("update accounts set paymentLastBillingPeriod = paymentLastBillingPeriod + ? where accountNumber = ?", (userPaymentStatusAndPayment[1], row[0])) 
             cursor.execute("update accounts set paymentThisBillingPeriod = 0 where paymentStatus = ? AND accountNumber = ?", (userPaymentStatusAndPayment[0], row[0]))
-        
+            cursor.execute("update accounts set paidLastMonth = 'false' where paymentStatus = ? AND accountNumber = ?", (userPaymentStatusAndPayment[0], row[0]))
+
     connection.commit()
-
-def job2():
-    connection = sqlite3.connect('database.s3db')
-    cursor = connection.cursor()
-   
-    sampleRow = cursor.execute("select dueDate from readings where dueDate != 'N/A'").fetchone()
-
-    if sampleRow is None:
-        return
-
-    dateObject = datetime.strptime(sampleRow[0], "%B %d, %Y")
-    currentDatetime = datetime.now().strftime("%B %d, %Y")
-
-    newDate = dateObject + timedelta(days = 3)
-    newDateFormatted = newDate.strftime("%B %d, %Y")
- 
-    if sampleRow[0] != currentDatetime:
-        return
-
-    accountFetch = cursor.execute("select accountNumber from accounts where paymentStatus = 'unpaid' AND paymentLastBillingPeriod != 0 AND paymentThisBillingPeriod != 0").fetchall()
-
-    for row in accountFetch:
-
-        accountAlmostTermination = cursor.execute("update accounts set accountStatus = 'almost terminated' where accountNumber = ?", (row[0],))
-        accountDisconnectionDateUpdate = cursor.execute("update readings set disconnectionDate = ?", (newDateFormatted,))
-    connection.commit()
-
 
 def job3():
     connection = sqlite3.connect('database.s3db')

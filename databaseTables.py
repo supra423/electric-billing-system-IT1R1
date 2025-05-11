@@ -31,8 +31,9 @@ class Database:
                 password TEXT NOT NULL,
                 address TEXT NOT NULL,
                 kWh INTEGER DEFAULT 0,
-                paymentStatus TEXT DEFAULT 'unpaid',
+                paymentStatus TEXT DEFAULT 'paid',
                 accountStatus TEXT DEFAULT 'active',
+                paidLastMonth TEXT DEFAULT 'true',
                 paymentLastBillingPeriod INTEGER DEFAULT 0,
                 paymentThisBillingPeriod INTEGER DEFAULT 0,
                 pendingBalance INTEGER DEFAULT 0
