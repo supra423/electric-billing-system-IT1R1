@@ -118,7 +118,7 @@ class mainMenu():
             totalPaymentWithoutVat = totalKwhUsage * 10
             addVat = totalPaymentWithoutVat * 0.12
 
-            billFrame = tk.Frame(self.contentFrame, bg = "white", bd = 2, relief = "solid")
+            billFrame = tk.Frame(self.contentFrame, bg = "#ffffff", bd = 2, relief = "solid")
             billFrame.grid(row = 0, column = 0, columnspan = 2, padx = 20, pady = 20, sticky = "nsew")
             
             billTitle = tk.Label(billFrame,
@@ -144,7 +144,7 @@ class mainMenu():
             billBody.insert('11.0', f"Total payment without VAT: ₱{totalPaymentWithoutVat:.2f}\n")
             billBody.insert('12.0', f"Added VAT: ₱{addVat:.2f}\n\n")
             billBody.insert('14.0', f"Total Payment this billing period: ₱{balanceFetch[1]:.2f}\n")
-            billBody.insert('15.0', f"Unpaid balance last billing period (Ignore if ₱0.00): ₱{balanceFetch[0]}\n\n")
+            billBody.insert('15.0', f"Unpaid balance last billing period (Ignore if ₱0.00): ₱{balanceFetch[0]:.2f}\n\n")
             billBody.insert('17.0', f"TOTAL PENDING BALANCE: ₱{balanceFetch[2]:.2f}\n")
 
             billBody.config(state = 'disabled')
@@ -160,11 +160,11 @@ class mainMenu():
 
         self.LabelHelperFunction(tk.Label, "Pay Page", 24, "#bbbbbb", 0, False)
         self.LabelHelperFunction(tk.Label, "You have two options when paying:", 20, "#bbbbbb", 1, False)
-        self.LabelHelperFunction(tk.Label, f"Pay all pending balance: ₱{self.balance[0]}", 20, "#bbbbbb", 2, False)
+        self.LabelHelperFunction(tk.Label, f"Pay all pending balance: ₱{self.balance[0]:.2f}", 20, "#bbbbbb", 2, False)
 
         self.LabelHelperFunction(tk.Button, "Pay all pending balance", 14, "#ababab", 3, True, lambda: self.buttonPayAllFunction("Pay All"))
 
-        self.LabelHelperFunction(tk.Label, f"Pay only last month's bill (Ignore if ₱0.00): ₱{self.balance[1]}", 20, "#bbbbbb", 4, False)
+        self.LabelHelperFunction(tk.Label, f"Pay only last month's bill (Ignore if ₱0.00): ₱{self.balance[1]:.2f}", 20, "#bbbbbb", 4, False)
 
         self.LabelHelperFunction(tk.Button, "Pay only last month's bill", 14, "#ababab", 5, True, lambda: self.buttonPayOnlyFunction("Pay Only Last Month"))
 
@@ -270,11 +270,27 @@ class mainMenu():
     ###        
     def viewTransactionHistory(self):
         self.clearContent()
-        tk.Label(self.contentFrame, 
+
+        historyFrame = tk.Frame(self.contentFrame, bg = '#ffffff', bd = 2, relief = 'solid') 
+        historyFrame.grid(row = 0, column = 0, columnspan = 2, padx = 20, pady = 20, sticky = "nsew")
+
+        tk.Label(historyFrame, 
                  text = "Transaction History Page", 
                  font = ("Arial", 24), 
-                 bg =  "#bbbbbb").grid(row = 0, column = 0, padx = 20, pady = 20)
+                 bg =  "#ffffff").pack(pady = 20)
+        
+        textFont = ("Arial", 14)
 
+        historyBody = tk.Text(historyFrame, height = 17, width = 50, font = textFont)
+
+        scrollBar = tk.Scrollbar(historyFrame, command = historyBody.yview)
+
+        historyBody.configure(yscrollcommand = scrollBar.set)
+
+        historyBody.pack(side = 'left')
+        scrollBar.pack(side = 'right', fill = 'y')
+
+        historyBody.config(state = 'disabled')
         self.bellIconSwitch()
 
     def logout(self):
