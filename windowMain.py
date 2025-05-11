@@ -2,6 +2,7 @@ import sqlite3
 import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
+from payScript import payAll, payOnlyLastMonth
 class mainMenu():
 
     def __init__(self, user):
@@ -109,9 +110,9 @@ class mainMenu():
         # readings = (previousReading, currentReading, previousReadingDate, currentReadingDate)
         readings = self.cursor.execute("select previousReading, currentReading, previousReadingDate, currentReadingDate, dueDate from readings where accountNumber = ?", (self.accountNumber,)).fetchone()
 
-        balance = self.cursor.execute("select paymentLastBillingPeriod, paymentThisBillingPeriod, pendingBalance, paymentStatus from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
+        balanceFetch = self.cursor.execute("select paymentLastBillingPeriod, paymentThisBillingPeriod, pendingBalance, paymentStatus from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
 
-        if balance[3] == 'unpaid' and balance[2]:
+        if balanceFetch[3] == 'unpaid' and balanceFetch[2]:
             totalKwhUsage = readings[1] - readings[0]
 
             totalPaymentWithoutVat = totalKwhUsage * 10
@@ -142,9 +143,9 @@ class mainMenu():
             billBody.insert('10.0', f"Value-added Tax (VAT): 12%\n")
             billBody.insert('11.0', f"Total payment without VAT: ₱{totalPaymentWithoutVat:.2f}\n")
             billBody.insert('12.0', f"Added VAT: ₱{addVat:.2f}\n\n")
-            billBody.insert('14.0', f"Total Payment this billing period: ₱{balance[1]:.2f}\n")
-            billBody.insert('15.0', f"Unpaid balance last billing period (Ignore if ₱0.00): ₱{balance[0]}\n\n")
-            billBody.insert('17.0', f"TOTAL PENDING BALANCE: ₱{balance[2]:.2f}\n")
+            billBody.insert('14.0', f"Total Payment this billing period: ₱{balanceFetch[1]:.2f}\n")
+            billBody.insert('15.0', f"Unpaid balance last billing period (Ignore if ₱0.00): ₱{balanceFetch[0]}\n\n")
+            billBody.insert('17.0', f"TOTAL PENDING BALANCE: ₱{balanceFetch[2]:.2f}\n")
 
             billBody.config(state = 'disabled')
         else:
@@ -153,19 +154,19 @@ class mainMenu():
 
     def pay(self):
 
-        balance = self.cursor.execute("select pendingBalance, paymentLastBillingPeriod from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
+        self.balance = self.cursor.execute("select pendingBalance, paymentLastBillingPeriod from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
 
         self.clearContent()
 
         self.LabelHelperFunction(tk.Label, "Pay Page", 24, "#bbbbbb", 0, False)
         self.LabelHelperFunction(tk.Label, "You have two options when paying:", 20, "#bbbbbb", 1, False)
-        self.LabelHelperFunction(tk.Label, f"Pay all pending balance: ₱{balance[0]}", 20, "#bbbbbb", 2, False)
+        self.LabelHelperFunction(tk.Label, f"Pay all pending balance: ₱{self.balance[0]}", 20, "#bbbbbb", 2, False)
 
-        self.LabelHelperFunction(tk.Button, "Pay all pending balance", 14, "#ababab", 3, True, lambda: self.buttonPayFunction("payAll"))
+        self.LabelHelperFunction(tk.Button, "Pay all pending balance", 14, "#ababab", 3, True, lambda: self.buttonPayAllFunction("Pay All"))
 
-        self.LabelHelperFunction(tk.Label, f"Pay only last month's bill (Ignore if ₱0.00): ₱{balance[1]}", 20, "#bbbbbb", 4, False)
+        self.LabelHelperFunction(tk.Label, f"Pay only last month's bill (Ignore if ₱0.00): ₱{self.balance[1]}", 20, "#bbbbbb", 4, False)
 
-        self.LabelHelperFunction(tk.Button, "Pay only last month's bill", 14, "#ababab", 5, True, lambda: self.buttonPayFunction("payOnlyLast"))
+        self.LabelHelperFunction(tk.Button, "Pay only last month's bill", 14, "#ababab", 5, True, lambda: self.buttonPayOnlyFunction("Pay Only Last Month"))
 
         self.bellIconSwitch()
 
@@ -185,13 +186,88 @@ class mainMenu():
                     font = ("Arial", fontSize),
                     bg = bgColor,
                     command = buttonPay).grid(row = whichRow, column = 0, padx = 5, pady = 5, sticky = "w")
-    ###
-    def buttonPayFunction(self, choice):
-        payWindow = tk.Toplevel()
-        payWindow.title(f"{choice}")
-        payWindow.geometry("400x300")
-        payWindow.resizable(False, False)
-    ###
+    
+    ### Payment window
+    def buttonPayAllFunction(self, choice):
+        self.payWindowWidgets(choice, payAll)
+
+    def buttonPayOnlyFunction(self, choice):
+        self.payWindowWidgets(choice, payOnlyLastMonth)
+
+    def payWindowWidgets(self, choice, chosenFunction):
+        self.payWindow = tk.Toplevel()
+        self.payWindow.title(f"{choice}")
+        self.payWindow.geometry("400x300")
+        self.payWindow.resizable(False, False)
+        self.payWindow.configure(bg = "#bbbbbb")
+
+        for i in range(3):
+            self.payWindow.columnconfigure(i, weight = 1)
+            self.payWindow.rowconfigure(i, weight = 1)
+
+        tk.Label(self.payWindow,
+                 text = "Please enter the\nproper amount:",
+                 font = ("Arial", 20),
+                 bg = "#bbbbbb").grid(row = 0, column = 1)
+        tk.Label(self.payWindow,
+                 text = "₱",
+                 font = ("Arial", 16),
+                 bg = "#bbbbbb").grid(row = 1, column = 0, pady = 10, sticky = "e")
+
+        self.paymentEntry = tk.Entry(self.payWindow, font = ('Arial', 16))
+        self.paymentEntry.grid(row = 1, column = 1, pady = 10)
+
+        tk.Button(self.payWindow,
+                  text = "PAY",
+                  font = ("Arial", 14),
+                  bg = "#ababab",
+                  command = lambda: self.paymentEntryGet(chosenFunction)).grid(row = 2, column = 2, pady = 10, sticky = "w")
+
+    def paymentEntryGet(self, chosenFunction):
+        paymentEntered = self.paymentEntry.get().strip()
+        
+        if not paymentEntered:
+            messagebox.showinfo("Error!", "You haven't enterred a payment yet!")
+            return
+
+        paymentFetch = self.cursor.execute("select paymentLastBillingPeriod, paymentThisBillingPeriod, pendingBalance from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
+
+        paymentEntered = float(paymentEntered)
+
+        if chosenFunction == payAll:
+
+            if paymentEntered < paymentFetch[2]:
+                messagebox.showinfo("Error!", "Insufficient amount!")
+
+            elif paymentEntered > paymentFetch[2]:
+                paymentChange = paymentEntered - paymentFetch[2]
+                messagebox.showinfo("Change!", f"Here is your change: {paymentChange}")
+                messagebox.showinfo("Payment successful!", "Payment successful! Thank you!")
+                payAll(self.accountNumber)
+                self.payWindow.destroy()
+
+            elif paymentEntered == paymentFetch[2]:
+                messagebox.showinfo("Payment successful!", "Payment successful! Thank you!")
+                payAll(self.accountNumber)
+                self.payWindow.destroy()
+
+        if chosenFunction == payOnlyLastMonth:
+            
+            if paymentEntered < paymentFetch[0]:
+                messagebox.showinfo("Error!", "Insufficient amount!")
+
+            elif paymentEntered > paymentFetch[0]:
+                paymentChange = paymentEntered - paymentFetch[0]
+                messagebox.showinfo("Change!", f"Here is your change: {paymentChange}")
+                messagebox.showinfo("Payment successful!", "Payment successful! Thank you!")
+                payOnlyLastMonth(self.accountNumber)
+                self.payWindow.destroy()
+
+            elif paymentEntered == paymentFetch[0]:
+                messagebox.showinfo("Payment successful!", "Payment successful! Thank you!")
+                payOnlyLastMonth(self.accountNumber)
+                self.payWindow.destroy()
+    ###        
     def viewTransactionHistory(self):
         self.clearContent()
         tk.Label(self.contentFrame, 
