@@ -3,6 +3,8 @@ import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 from payScript import payAll, payOnlyLastMonth
+from datetime import datetime
+
 class mainMenu():
 
     def __init__(self, user):
@@ -118,8 +120,16 @@ class mainMenu():
             totalPaymentWithoutVat = totalKwhUsage * 10
             addVat = totalPaymentWithoutVat * 0.12
 
-            billFrame = tk.Frame(self.contentFrame, bg = "#ffffff", bd = 2, relief = "solid")
-            billFrame.grid(row = 0, column = 0, columnspan = 2, padx = 20, pady = 20, sticky = "nsew")
+            billFrame = tk.Frame(self.contentFrame,
+                                 bg = "#ffffff",
+                                 bd = 2,
+                                 relief = "solid")
+            billFrame.grid(row = 0,
+                           column = 0,
+                           columnspan = 2,
+                           padx = 20,
+                           pady = 20,
+                           sticky = "nsew")
             
             billTitle = tk.Label(billFrame,
                     text = " --- E P A L C O ---",
@@ -130,7 +140,10 @@ class mainMenu():
 
             textFont = ("Arial", 14)
 
-            billBody = tk.Text(billFrame, height = 17, width = 50, font = textFont)
+            billBody = tk.Text(billFrame,
+                               height = 17,
+                               width = 50,
+                               font = textFont)
             billBody.pack()
 
             billBody.insert('1.0', f"Name: {self.username}\n")
@@ -225,29 +238,37 @@ class mainMenu():
 
     def paymentEntryGet(self, chosenFunction):
         paymentEntered = self.paymentEntry.get().strip()
-        
+        currentDatetime = datetime.now().strftime("%B %d, %Y")
+
         if not paymentEntered:
             messagebox.showinfo("Error!", "You haven't enterred a payment yet!")
             return
 
         paymentFetch = self.cursor.execute("select paymentLastBillingPeriod, paymentThisBillingPeriod, pendingBalance from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
 
-        paymentEntered = float(paymentEntered)
-
+        try:
+            paymentEntered = float(paymentEntered)
+        except ValueError:
+            messagebox.showinfo("Invalid Input!", "Please enter a valid number!")
+            return
         if chosenFunction == payAll:
 
             if paymentEntered < paymentFetch[2]:
                 messagebox.showinfo("Error!", "Insufficient amount!")
 
             elif paymentEntered > paymentFetch[2]:
+
                 paymentChange = paymentEntered - paymentFetch[2]
                 messagebox.showinfo("Change!", f"Here is your change: {paymentChange}")
                 messagebox.showinfo("Payment successful!", "Payment successful! Thank you!")
+                self.insertHistory(self.accountNumber, paymentFetch[2], currentDatetime)
                 payAll(self.accountNumber)
                 self.payWindow.destroy()
 
             elif paymentEntered == paymentFetch[2]:
+
                 messagebox.showinfo("Payment successful!", "Payment successful! Thank you!")
+                self.insertHistory(self.accountNumber, paymentFetch[2], currentDatetime)
                 payAll(self.accountNumber)
                 self.payWindow.destroy()
 
@@ -257,22 +278,42 @@ class mainMenu():
                 messagebox.showinfo("Error!", "Insufficient amount!")
 
             elif paymentEntered > paymentFetch[0]:
+
                 paymentChange = paymentEntered - paymentFetch[0]
                 messagebox.showinfo("Change!", f"Here is your change: {paymentChange}")
                 messagebox.showinfo("Payment successful!", "Payment successful! Thank you!")
+                self.insertHistory(self.accountNumber, paymentFetch[0], currentDatetime)
                 payOnlyLastMonth(self.accountNumber)
+
                 self.payWindow.destroy()
 
             elif paymentEntered == paymentFetch[0]:
+
                 messagebox.showinfo("Payment successful!", "Payment successful! Thank you!")
+                self.insertHistory(self.accountNumber, paymentFetch[0], currentDatetime)
                 payOnlyLastMonth(self.accountNumber)
+
                 self.payWindow.destroy()
     ###        
+
+    def insertHistory(self, userAccountNumber, userAmountPaid, historyTimestamp):
+        self.cursor.execute("insert into history(accountNumber, amountPaid, timestamp) values(?, ?, ?)", (userAccountNumber, userAmountPaid, historyTimestamp))
+        self.connection.commit()
+
     def viewTransactionHistory(self):
+
         self.clearContent()
 
-        historyFrame = tk.Frame(self.contentFrame, bg = '#ffffff', bd = 2, relief = 'solid') 
-        historyFrame.grid(row = 0, column = 0, columnspan = 2, padx = 20, pady = 20, sticky = "nsew")
+        historyFrame = tk.Frame(self.contentFrame,
+                                bg = '#ffffff',
+                                bd = 2,
+                                relief = 'solid') 
+        historyFrame.grid(row = 0,
+                          column = 0,
+                          columnspan = 2,
+                          padx = 20,
+                          pady = 20,
+                          sticky = "nsew")
 
         tk.Label(historyFrame, 
                  text = "Transaction History Page", 
@@ -281,14 +322,27 @@ class mainMenu():
         
         textFont = ("Arial", 14)
 
-        historyBody = tk.Text(historyFrame, height = 17, width = 50, font = textFont)
+        historyBody = tk.Text(historyFrame,
+                              height = 17,
+                              width = 50,
+                              font = textFont)
 
-        scrollBar = tk.Scrollbar(historyFrame, command = historyBody.yview)
+        scrollBar = tk.Scrollbar(historyFrame,
+                                 command = historyBody.yview)
 
         historyBody.configure(yscrollcommand = scrollBar.set)
 
         historyBody.pack(side = 'left')
         scrollBar.pack(side = 'right', fill = 'y')
+        
+        historyFetch = self.cursor.execute("select amountPaid, timestamp from history where accountNumber = ? ORDER BY id DESC", (self.accountNumber,)).fetchall()
+        #historyFetch.sort(key = lambda row: historyFetch[0])
+
+        textRow = 1.0 
+        for history in historyFetch:
+            historyBody.insert(f"{textRow:.1f}", f"On {history[1]}, you have made a payment of ₱{history[0]}\n\n")
+            textRow += 2.0
+            textRow = float(textRow)
 
         historyBody.config(state = 'disabled')
         self.bellIconSwitch()

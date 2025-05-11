@@ -47,6 +47,7 @@ class Database:
 
             CREATE TABLE IF NOT EXISTS history 
             (
+                id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                 accountNumber TEXT NOT NULL,
                 amountPaid INTEGER NOT NULL,
                 timestamp TEXT NOT NULL
