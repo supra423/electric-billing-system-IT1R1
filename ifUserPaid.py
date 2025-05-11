@@ -16,7 +16,7 @@ to comply by marking them as 'almost terminated' before marking their account as
 
 the second function (job2) basically checks if the user has paid
 before the due date (by checking the payment status if it is 'paid' or 'unpaid'), 
-if not, the paymentLastBillingPeriod column will get assigned with
+if not, the paymentLastBillingPeriod column will get appended with
 paymentThisBillingPeriod, this signifies that the user still has not paid last month's
 bill
 
@@ -79,9 +79,9 @@ def job2():
     for row in accountFetch:
         # basically, using the account numbers of rows that don't contain a 'N/A' dueDate
         # we will check each account using there accountNumber if their paymentStatus is 'paid' or 'unpaid'
-        userPaymentStatusAndPayment = cursor.execute("select paymentStatus, paymentThisBillingPeriod, pendingBalance from accounts where accountNumber = ?", (row[0],)).fetchone()
+        userPaymentStatusAndPayment = cursor.execute("select paymentStatus, paymentThisBillingPeriod, pendingBalance, paidLastMonth from accounts where accountNumber = ?", (row[0],)).fetchone()
         
-        if userPaymentStatusAndPayment[0] == 'unpaid':
+        if userPaymentStatusAndPayment[0] == 'unpaid' and userPaymentStatusAndPayment[3] == 'true':
 
             cursor.execute("update accounts set paymentLastBillingPeriod = paymentLastBillingPeriod + ? where accountNumber = ?", (userPaymentStatusAndPayment[1], row[0])) 
             cursor.execute("update accounts set paymentThisBillingPeriod = 0 where paymentStatus = ? AND accountNumber = ?", (userPaymentStatusAndPayment[0], row[0]))

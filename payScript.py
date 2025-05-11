@@ -15,6 +15,8 @@ def payAll(userAccountNumber):
         WHERE accountNumber = ?
     """, (userAccountNumber,))
 
+    cursor.execute("update readings set disconnectionDate = 'N/A' where accountNumber = ?", (userAccountNumber,))
+
     connection.commit()
 
 def payOnlyLastMonth(userAccountNumber):
@@ -32,4 +34,13 @@ def payOnlyLastMonth(userAccountNumber):
         where accountNumber = ?
     """, (paymentLastBillingPeriodFetch[0], userAccountNumber))
 
+    cursor.execute("update readings set disconnectionDate = 'N/A' where accountNumber = ?", (userAccountNumber,))
+
+    connection.commit()
+
+    paymentStatusCheck = cursor.execute("select paymentLastBillingPeriod, paymentThisBillingPeriod, pendingBalance from accounts where accountNumber = ?", (userAccountNumber,)).fetchone()
+
+    if paymentStatusCheck[0] == 0 and paymentStatusCheck[1] == 0 and paymentStatusCheck[2] == 0:
+        cursor.execute("update accounts set paymentStatus = 'paid' where accountNumber = ?", (userAccountNumber,))
+    
     connection.commit()

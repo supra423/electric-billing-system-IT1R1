@@ -292,8 +292,8 @@ class mainMenu():
             widget.destroy()
 
     def notificationButton(self):
-        paymentStatusCheck = self.cursor.execute("select paymentStatus, pendingBalance from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
-        if paymentStatusCheck[0] == 'unpaid' and paymentStatusCheck[1]:
+        paymentStatusCheck = self.cursor.execute("select paymentStatus, paymentThisBillingPeriod, pendingBalance from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
+        if paymentStatusCheck[0] == 'unpaid' and paymentStatusCheck[2]:
 
             messagebox.showinfo("Notification!", "A new bill is available!")
             self.cursor.execute("update notifications set viewed = 'true' where accountNumber = ?", (self.accountNumber,))
