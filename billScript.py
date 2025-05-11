@@ -29,7 +29,7 @@ def job1():
 
     accountFetch2 = cursor.execute("select accountNumber, kWh from accounts").fetchall()
 
-    for row2 in  accountFetch2:
+    for row2 in accountFetch2:
 
         accountStatusCheck2 = cursor.execute("select accountStatus from accounts where accountNumber = ?", (row2[0],)).fetchone()
 
@@ -37,6 +37,12 @@ def job1():
             cursor.execute("update readings set currentReading = ?, currentReadingDate = ?, dueDate = ? where accountNumber = ?", (row2[1], timeStamp, formattedDueDate, row2[0]))
         else:
             continue
+
+    accountFetch3 = cursor.execute("select accountNumber from accounts where paymentStatus = 'paid'").fetchall()
+
+    for row3 in accountFetch3:
+
+        cursor.execute("update accounts set paymentStatus = 'unpaid' where accountNumber = ?", (row3[0],))
 
     connection.commit()
 
@@ -59,7 +65,6 @@ def job2():
         cursor.execute("update accounts set pendingBalance = pendingBalance + ?, paymentThisBillingPeriod = ? where accountNumber = ?", (totalPaymentWithVat, totalPaymentWithVat,reading[0]))
     
     connection.commit()
-
 schedule.every().day.at("00:00").do(job1)
 schedule.every().day.at("00:01").do(job2)
 
