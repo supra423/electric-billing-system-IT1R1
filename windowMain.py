@@ -259,7 +259,7 @@ class mainMenu():
             elif paymentEntered > paymentFetch[2]:
 
                 paymentChange = paymentEntered - paymentFetch[2]
-                messagebox.showinfo("Change!", f"Here is your change: {paymentChange}")
+                messagebox.showinfo("Change!", f"Here is your change: {paymentChange:.2f}")
                 messagebox.showinfo("Payment successful!", "Payment successful! Thank you!")
                 self.insertHistory(self.accountNumber, paymentFetch[2], currentDatetime)
                 payAll(self.accountNumber)
@@ -280,7 +280,7 @@ class mainMenu():
             elif paymentEntered > paymentFetch[0]:
 
                 paymentChange = paymentEntered - paymentFetch[0]
-                messagebox.showinfo("Change!", f"Here is your change: {paymentChange}")
+                messagebox.showinfo("Change!", f"Here is your change: {paymentChange:.2f}")
                 messagebox.showinfo("Payment successful!", "Payment successful! Thank you!")
                 self.insertHistory(self.accountNumber, paymentFetch[0], currentDatetime)
                 payOnlyLastMonth(self.accountNumber)

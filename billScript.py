@@ -38,12 +38,6 @@ def job1():
         else:
             continue
 
-    accountFetch3 = cursor.execute("select accountNumber from accounts where paymentStatus = 'paid'").fetchall()
-
-    for row3 in accountFetch3:
-
-        cursor.execute("update accounts set paymentStatus = 'unpaid' where accountNumber = ?", (row3[0],))
-
     connection.commit()
 
 def job2():
@@ -63,7 +57,14 @@ def job2():
         
         # pendingBalance gets appended, while paymentThisBillingPeriod gets overwritten 
         cursor.execute("update accounts set pendingBalance = pendingBalance + ?, paymentThisBillingPeriod = ? where accountNumber = ?", (totalPaymentWithVat, totalPaymentWithVat,reading[0]))
-    
+
+    accountFetch3 = cursor.execute("select accountNumber from accounts where paymentStatus = 'paid'").fetchall()
+
+    for row3 in accountFetch3:
+
+        cursor.execute("update accounts set paymentStatus = 'unpaid' where accountNumber = ?", (row3[0],))
+        cursor.execute("update notifications set viewed = 'false' where accountNumber = ?", (row3[0],))
+
     connection.commit()
 schedule.every().day.at("00:00").do(job1)
 schedule.every().day.at("00:01").do(job2)
