@@ -166,20 +166,24 @@ class mainMenu():
         self.bellIconSwitch()
 
     def pay(self):
-
         self.balance = self.cursor.execute("select pendingBalance, paymentLastBillingPeriod from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
-
         self.clearContent()
 
-        self.LabelHelperFunction(tk.Label, "Pay Page", 24, "#bbbbbb", 0, False)
-        self.LabelHelperFunction(tk.Label, "You have two options when paying:", 20, "#bbbbbb", 1, False)
-        self.LabelHelperFunction(tk.Label, f"Pay all pending balance: ₱{self.balance[0]:.2f}", 20, "#bbbbbb", 2, False)
+        if self.balance[0] > 0:    
 
-        self.LabelHelperFunction(tk.Button, "Pay all pending balance", 14, "#ababab", 3, True, lambda: self.buttonPayAllFunction("Pay All"))
+            self.LabelHelperFunction(tk.Label, "Pay Page", 24, "#bbbbbb", 0, False)
+            self.LabelHelperFunction(tk.Label, "You have two options when paying:", 20, "#bbbbbb", 1, False)
+            self.LabelHelperFunction(tk.Label, f"Pay all pending balance: ₱{self.balance[0]:.2f}", 20, "#bbbbbb", 2, False)
 
-        self.LabelHelperFunction(tk.Label, f"Pay only last month's bill (Ignore if ₱0.00): ₱{self.balance[1]:.2f}", 20, "#bbbbbb", 4, False)
+            self.LabelHelperFunction(tk.Button, "Pay all pending balance", 14, "#ababab", 3, True, lambda: self.buttonPayAllFunction("Pay All"))
 
-        self.LabelHelperFunction(tk.Button, "Pay only last month's bill", 14, "#ababab", 5, True, lambda: self.buttonPayOnlyFunction("Pay Only Last Month"))
+            self.LabelHelperFunction(tk.Label, f"Pay only last month's bill (Ignore if ₱0.00): ₱{self.balance[1]:.2f}", 20, "#bbbbbb", 4, False)
+
+            self.LabelHelperFunction(tk.Button, "Pay only last month's bill", 14, "#ababab", 5, True, lambda: self.buttonPayOnlyFunction("Pay Only Last Month"))
+            
+        else:
+            messagebox.showinfo("Notification!", "You currently have no pending balance!")
+            return
 
         self.bellIconSwitch()
 
@@ -219,23 +223,22 @@ class mainMenu():
             self.payWindow.rowconfigure(i, weight = 1)
 
         tk.Label(self.payWindow,
-                 text = "Please enter the\nproper amount:",
-                 font = ("Arial", 20),
-                 bg = "#bbbbbb").grid(row = 0, column = 1)
+                text = "Please enter the\nproper amount:",
+                font = ("Arial", 20),
+                bg = "#bbbbbb").grid(row = 0, column = 1)
         tk.Label(self.payWindow,
-                 text = "₱",
-                 font = ("Arial", 16),
-                 bg = "#bbbbbb").grid(row = 1, column = 0, pady = 10, sticky = "e")
+                text = "₱",
+                font = ("Arial", 16),
+                bg = "#bbbbbb").grid(row = 1, column = 0, pady = 10, sticky = "e")
 
         self.paymentEntry = tk.Entry(self.payWindow, font = ('Arial', 16))
         self.paymentEntry.grid(row = 1, column = 1, pady = 10)
 
         tk.Button(self.payWindow,
-                  text = "PAY",
-                  font = ("Arial", 14),
-                  bg = "#ababab",
-                  command = lambda: self.paymentEntryGet(chosenFunction)).grid(row = 2, column = 2, pady = 10, sticky = "w")
-
+                text = "PAY",
+                font = ("Arial", 14),
+                bg = "#ababab",
+                command = lambda: self.paymentEntryGet(chosenFunction)).grid(row = 2, column = 2, pady = 10, sticky = "w")
     def paymentEntryGet(self, chosenFunction):
         paymentEntered = self.paymentEntry.get().strip()
         currentDatetime = datetime.now().strftime("%B %d, %Y")
@@ -259,7 +262,7 @@ class mainMenu():
             elif paymentEntered > paymentFetch[2]:
 
                 paymentChange = paymentEntered - paymentFetch[2]
-                messagebox.showinfo("Change!", f"Here is your change: {paymentChange:.2f}")
+                messagebox.showinfo("Change!", f"Here is your change: ₱{paymentChange:.2f}")
                 messagebox.showinfo("Payment successful!", "Payment successful! Thank you!")
                 self.insertHistory(self.accountNumber, paymentFetch[2], currentDatetime)
                 payAll(self.accountNumber)
@@ -280,7 +283,7 @@ class mainMenu():
             elif paymentEntered > paymentFetch[0]:
 
                 paymentChange = paymentEntered - paymentFetch[0]
-                messagebox.showinfo("Change!", f"Here is your change: {paymentChange:.2f}")
+                messagebox.showinfo("Change!", f"Here is your change: ₱{paymentChange:.2f}")
                 messagebox.showinfo("Payment successful!", "Payment successful! Thank you!")
                 self.insertHistory(self.accountNumber, paymentFetch[0], currentDatetime)
                 payOnlyLastMonth(self.accountNumber)
