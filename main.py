@@ -8,9 +8,9 @@ from subProcess import subProcess
 
 # ROA, Alexus Enzo
 # MORENO, Dennis
-# Nazareno, Charles Archie
-# Yu, Mark Lester
-# Gumatay, Nick Adrienne
+# NAZARENO, Charles Archie
+# YU, Mark Lester
+# GUMATAY, Nick Adrienne
 
 if __name__ == "__main__":
     Database()

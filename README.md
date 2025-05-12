@@ -14,13 +14,14 @@ is only for demonstration purposes :)
 the kwh.py basically updates the database automatically
 everyday as if a user is actually consuming electricity
 
-Do note that you have to be windows for the stuff to work because
+Do note that you have to be on windows for the stuff to work because
 when you run the main.py file, the program also executes other scripts
 and at the same time turn them into detached processes, which for some
-reasons, detached process flag I believe does not exist in 
+reasons, detached process flag I believe also exists in 
 posix (UNIX-based) operating systems, such as MacOS, Linux-based distributions, etc.
+but the way they create detached processes is different compared to windows.
 
-You can probably instead run these scripts (kwh.py, billScript.py) independently using separate terminal
+You can probably instead run these scripts (kwh.py, billScript.py, ifUserPaid.py) independently using separate terminal
 tabs or windows.
 
 I just made it this way because I find it cool to turn these scripts into
