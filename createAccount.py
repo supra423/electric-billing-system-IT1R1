@@ -29,6 +29,8 @@ class createAccount():
         # initial payment for installation
         self.installationFee = self.labelAndEntry(self.createAccountWindow, True, "Installation fee\n(Php. 5,000.00):", 20)
 
+        self.createAccountWindow.bind('<Return>', lambda event: self.insertNewAccount())
+
         tk.Button(self.createAccountWindow, 
                 text = "Create \nnew account", 
                 width = 15, 

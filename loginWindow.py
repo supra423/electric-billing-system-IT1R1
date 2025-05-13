@@ -29,6 +29,7 @@ class loginWindow():
         self.accountNumberEntry = self.labelAndEntry(self.loginWindow, True, "Enter account number:", 20)
         
         self.passwordEntry = self.labelAndEntry(self.loginWindow, False, "Enter Password:", 20)
+        self.loginWindow.bind('<Return>', lambda event: self.login())
 
         tk.Button(self.loginWindow, 
                 text = "Login", 
