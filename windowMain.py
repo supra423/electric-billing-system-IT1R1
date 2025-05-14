@@ -60,6 +60,9 @@ class mainMenu():
         self.mainWindow.mainloop()
 
     def mainButtons(self, buttonText, buttonCommand):
+        """
+        Helper function for buttons
+        """
         tk.Button(self.sideBar,
                   text = buttonText,
                   width = 20,
@@ -75,40 +78,30 @@ class mainMenu():
     def mainPage(self):
         self.clearContent()
 
-        accountStatusCheck = self.cursor.execute("select accountStatus, pendingBalance from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
-        kwhRead = self.cursor.execute("select kWh from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
+        accountsCheck = self.cursor.execute("select accountStatus, pendingBalance, kWh from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
+        # kwhRead = self.cursor.execute("select kWh from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
+        disconnectionDateFetch = self.cursor.execute("select disconnectionDate from readings where accountNumber = ?", (self.accountNumber,)).fetchone()
 
         content = tk.Frame(self.contentFrame, bg = "#bbbbbb")
         content.grid(row = 1, column = 0, columnspan = 2,
                      sticky = "nw", padx = 20, pady = 20)
 
-        tk.Label(content,
-                 text = "Welcome!",
-                 font = ("Arial", 40),
-                 bg = "#bbbbbb").grid(row = 0, column = 0, padx = 5, pady = 5, sticky = "w")
+        self.labelHelperFunction(tk.Label, self.contentFrame, "Welcome!", 40, "#bbbbbb", 0, False)
+        self.labelHelperFunction(tk.Label, self.contentFrame, self.username, 40, "#bbbbbb", 1, False)
+        self.labelHelperFunction(tk.Label, self.contentFrame, f"Electricity meter: {accountsCheck[2]} kWh", 30, "#bbbbbb", 2, False)
 
-        tk.Label(content,
-                 text = self.username,
-                 font = ("Arial", 40),
-                 bg = "#bbbbbb").grid(row = 1, column = 0, padx = 5, pady = 5, sticky = "w")
-
-        tk.Label(content,
-                 text = f"Electricity meter: {kwhRead[0]} kWh",
-                 font = ("Arial", 30),
-                 bg = "#bbbbbb").grid(row=2, column=0, padx=5, pady=5, sticky="w")
-
-        if accountStatusCheck[0] == 'terminated':
-            tk.Label(content,
-                     text = "Your account has been terminated!",
-                     font = ("Arial", 20),
-                     bg = "#bbbbbb").grid(row=3, column=0, padx=5, pady=5, sticky="w")
-            tk.Label(content,
-                     text = f"Please pay the total balance: ₱{accountStatusCheck[1]:.2f}",
-                     font = ("Arial", 20),
-                     bg = "#bbbbbb").grid(row = 4, column = 0, padx = 5, pady = 5, sticky = "w")
-
+        if accountsCheck[0] == 'terminated':
+            self.labelHelperFunction(tk.Label, self.contentFrame, "Your account has been closed!", 20, "#bbbbbb", 3, False)
+            self.labelHelperFunction(tk.Label, self.contentFrame, f"Please pay the total balance: ₱{accountsCheck[1]:.2f}", 20, "#bbbbbb", 4, False)
+        # Please pay the total balance!
+        
+        if accountsCheck[0]  == 'almost terminated':
+            self.labelHelperFunction(tk.Label, self.contentFrame, "Your account is about to close!", 20, "#bbbbbb", 3, False)
+            self.labelHelperFunction(tk.Label, self.contentFrame, f"Please atleast pay last month's bill before: {disconnectionDateFetch[0]}", 20, "#bbbbbb", 4, False)
+            self.labelHelperFunction(tk.Label, self.contentFrame, f"Last month's bill payment: ₱{accountsCheck[1]:.2f}", 20, "#bbbbbb", 5, False)
         # Please pay the total balance!
         self.bellIconSwitch()
+ 
 
     def generateBill(self):
         self.clearContent()
@@ -151,23 +144,17 @@ class mainMenu():
 
             billBody.insert('1.0', f"Name: {self.username}\n")
             billBody.insert('2.0', f"Address: {self.address}\n\n")
-            billBody.insert('4.0', f"Billing period: {
-                            readings[2]} - {readings[3]}\n")
-            billBody.insert(
-                '5.0', f"Previous reading - current reading (kWh): {readings[0]} - {readings[1]}\n")
+            billBody.insert('4.0', f"Billing period: {readings[2]} - {readings[3]}\n")
+            billBody.insert('5.0', f"Previous reading - current reading (kWh): {readings[0]} - {readings[1]}\n")
             billBody.insert('6.0', f"Total kWh usage: {totalKwhUsage}\n\n")
             billBody.insert('8.0', f"PAY BEFORE: {readings[4]}\n")
             billBody.insert('9.0', f"Rate: ₱10/kWh\n")
             billBody.insert('10.0', f"Value-added Tax (VAT): 12%\n")
-            billBody.insert('11.0', f"Total payment without VAT: ₱{
-                            totalPaymentWithoutVat:.2f}\n")
+            billBody.insert('11.0', f"Total payment without VAT: ₱{totalPaymentWithoutVat:.2f}\n")
             billBody.insert('12.0', f"Added VAT: ₱{addVat:.2f}\n\n")
-            billBody.insert('14.0', f"Total Payment this billing period: ₱{
-                            balanceFetch[1]:.2f}\n")
-            billBody.insert('15.0', f"Unpaid balance last billing period (Ignore if ₱0.00): ₱{
-                            balanceFetch[0]:.2f}\n\n")
-            billBody.insert('17.0', f"TOTAL PENDING BALANCE: ₱{
-                            balanceFetch[2]:.2f}\n")
+            billBody.insert('14.0', f"Total Payment this billing period: ₱{balanceFetch[1]:.2f}\n")
+            billBody.insert('15.0', f"Unpaid balance last billing period (Ignore if ₱0.00): ₱{balanceFetch[0]:.2f}\n\n")
+            billBody.insert('17.0', f"TOTAL PENDING BALANCE: ₱{balanceFetch[2]:.2f}\n")
 
             billBody.config(state='disabled')
         else:
@@ -176,51 +163,37 @@ class mainMenu():
         self.bellIconSwitch()
 
     def pay(self):
-        self.balance = self.cursor.execute(
-            "select pendingBalance, paymentLastBillingPeriod from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
+        self.balance = self.cursor.execute("select pendingBalance, paymentLastBillingPeriod from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
         self.clearContent()
 
         if self.balance[0] > 0:
 
-            self.LabelHelperFunction(tk.Label, "Pay Page", 24, "#bbbbbb", 0, False)
-            self.LabelHelperFunction(tk.Label, "You have two options when paying:", 20, "#bbbbbb", 1, False)
-            self.LabelHelperFunction(tk.Label, f"Pay all pending balance: ₱{self.balance[0]:.2f}", 20, "#bbbbbb", 2, False)
-
-            self.LabelHelperFunction(tk.Button, "Pay all pending balance", 14, "#ababab", 3, True, lambda: self.buttonPayAllFunction("Pay All"))
-
-            self.LabelHelperFunction(tk.Label, f"Pay only last month's bill (Ignore if ₱0.00): ₱{self.balance[1]:.2f}", 20, "#bbbbbb", 4, False)
-
-            self.LabelHelperFunction(tk.Button, "Pay only last month's bill", 14, "#ababab", 5, True, lambda: self.buttonPayOnlyFunction("Pay Only Last Month"))
+            self.labelHelperFunction(tk.Label, self.contentFrame, "Pay Page", 24, "#bbbbbb", 0, False)
+            self.labelHelperFunction(tk.Label, self.contentFrame, "You have two options when paying:", 20, "#bbbbbb", 1, False)
+            self.labelHelperFunction(tk.Label, self.contentFrame, f"Pay all pending balance: ₱{self.balance[0]:.2f}", 20, "#bbbbbb", 2, False)
+            self.labelHelperFunction(tk.Button, self.contentFrame, "Pay all pending balance", 14, "#ababab", 3, True, lambda: self.buttonPayAllFunction("Pay All"))
+            self.labelHelperFunction(tk.Label, self.contentFrame, f"Pay only last month's bill (Ignore if ₱0.00): ₱{self.balance[1]:.2f}", 20, "#bbbbbb", 4, False)
+            self.labelHelperFunction(tk.Button, self.contentFrame, "Pay only last month's bill", 14, "#ababab", 5, True, lambda: self.buttonPayOnlyFunction("Pay Only Last Month"))
 
         else:
-            messagebox.showinfo(
-                "Notification!", "You currently have no pending balance!")
+            messagebox.showinfo("Notification!", "You currently have no pending balance!")
             return
 
         self.bellIconSwitch()
-
-    def LabelHelperFunction(self, labelOrButton, labelText, fontSize, bgColor, whichRow, buttonCommandBool, buttonPay = None):
-        """
-        helper function just to reduce some lines :)
-        """
-
-        if buttonCommandBool == False:
-            labelOrButton(self.contentFrame,
-                          text= labelText,
-                          font= ("Arial", fontSize),
-                          bg= bgColor).grid(row = whichRow, column = 0, padx = 5, pady = 5, sticky = "w")
-        else:
-            labelOrButton(self.contentFrame,
-                          text= labelText,
-                          font= ("Arial", fontSize),
-                          bg= bgColor,
-                          command= buttonPay).grid(row = whichRow, column = 0, padx = 5, pady = 5, sticky = "w")
-
     # Payment window
     def buttonPayAllFunction(self, choice):
+        if self.balance[0] <= 0:
+            messagebox.showinfo("Error!", "You have no pending balance!")
+            return
+
         self.payWindowWidgets(choice, payAll)
 
     def buttonPayOnlyFunction(self, choice):
+
+        if self.balance[1] <= 0:
+            messagebox.showinfo("Error!", "You have already paid last month's bill!")
+            return
+
         self.payWindowWidgets(choice, payOnlyLastMonth)
 
     def payWindowWidgets(self, choice, chosenFunction):
@@ -230,12 +203,19 @@ class mainMenu():
         self.payWindow.resizable(False, False)
         self.payWindow.configure(bg="#bbbbbb")
 
+        balanceFetch = self.cursor.execute("select paymentLastBillingPeriod, pendingBalance from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
+
+        if choice == "Pay All":
+            balanceCheck = balanceFetch[1]
+        elif choice == "Pay Only Last Month":
+            balanceCheck = balanceFetch[0]
+
         for i in range(3):
             self.payWindow.columnconfigure(i, weight=1)
             self.payWindow.rowconfigure(i, weight=1)
 
         tk.Label(self.payWindow,
-                 text= "Please enter the\nproper amount:",
+                 text= f"Please enter the\nproper amount:\n₱{balanceCheck:.2f}",
                  font= ("Arial", 20),
                  bg= "#bbbbbb").grid(row = 0, column = 1)
         tk.Label(self.payWindow,
@@ -321,6 +301,8 @@ class mainMenu():
                 payOnlyLastMonth(self.accountNumber)
 
                 self.payWindow.destroy()
+        self.clearContent()
+        self.mainPage()
     ###
 
     def insertHistory(self, userAccountNumber, userAmountPaid, historyTimestamp):
@@ -336,6 +318,7 @@ class mainMenu():
                                 bg = '#ffffff',
                                 bd = 2,
                                 relief = 'solid')
+
         historyFrame.grid(row = 0,
                           column = 0,
                           columnspan = 2,
@@ -343,10 +326,7 @@ class mainMenu():
                           pady = 20,
                           sticky = "nsew")
 
-        tk.Label(historyFrame,
-                 text = "Transaction History Page",
-                 font = ("Arial", 24),
-                 bg = "#ffffff").pack(pady = 20)
+        self.labelHelperFunction(tk.Label, historyFrame, "Transaction History Page", 24, "#ffffff", 0, False)
 
         textFont = ("Arial", 14)
 
@@ -355,16 +335,15 @@ class mainMenu():
                               width = 50,
                               font = textFont)
 
+        historyBody.grid(sticky = "w")
+
         scrollBar = tk.Scrollbar(historyFrame,
                                  command = historyBody.yview)
 
         historyBody.configure(yscrollcommand = scrollBar.set)
 
-        historyBody.pack(side = 'left')
-        scrollBar.pack(side = 'right', fill = 'y')
-
+        scrollBar.grid(row = 1, column = 1, sticky = "ns", rowspan = 3)
         historyFetch = self.cursor.execute("select amountPaid, timestamp from history where accountNumber = ? ORDER BY id DESC", (self.accountNumber,)).fetchall()
-        # historyFetch.sort(key = lambda row: historyFetch[0])
 
         textRow = 1.0
         for history in historyFetch:
@@ -402,9 +381,27 @@ class mainMenu():
 
         self.bellIconSwitch()
 
+    def labelHelperFunction(self, labelOrButton, frame, labelText, fontSize, bgColor, whichRow, buttonCommandBool, buttonPay = None):
+        """
+        helper function just to reduce some lines :)
+        """
+
+        if buttonCommandBool == False:
+            labelOrButton(frame,
+                          text= labelText,
+                          font= ("Arial", fontSize),
+                          bg= bgColor).grid(row = whichRow, column = 0, padx = 5, pady = 5, sticky = "w")
+        else:
+            labelOrButton(frame,
+                          text= labelText,
+                          font= ("Arial", fontSize),
+                          bg= bgColor,
+                          command= buttonPay).grid(row = whichRow, column = 0, padx = 5, pady = 5, sticky = "w")
+
+
     def bellIconSwitch(self):
         '''
-        helper function that continuously checks 
+        a function that continuously checks 
         every time if a notification is available,
         this function gets called every time a user clicks a button
         '''
