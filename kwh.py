@@ -4,6 +4,13 @@ import time
 
 import schedule
 
+"""
+This script right here is responsible for simulating that there are actual users in the billing system.
+
+This basically updates the kWh column of each user everyday
+
+"""
+
 def job():
     connection = sqlite3.connect('database.s3db')
     cursor = connection.cursor()

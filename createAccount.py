@@ -2,13 +2,12 @@ import sqlite3
 import tkinter as tk
 from tkinter import messagebox
 
-class createAccount():  
+class createAccount():
 
     def __init__(self):
 
         self.connection = sqlite3.connect('database.s3db')
         self.cursor = self.connection.cursor()
-        
 
         self.createAccountWindow = tk.Tk()
         self.createAccountWindow.title("Create an account")
@@ -64,21 +63,20 @@ class createAccount():
                 if not errorTuple[0]:
                     messagebox.showinfo('Error!', errorTuple[1])
                     return 
-                
+
             if newPassword != newPasswordConfirm:
                 messagebox.showinfo('Error!', 'Password confirmation is incorrect!')
                 return
-            
+
             accountFetch = self.cursor.execute("select accountNumber from accounts where accountNumber = ?",
                                                     (newAccountNumber,)).fetchone()
             if accountFetch:
                 messagebox.showinfo('Error!', 'That account already exists!')
                 return
-            
+
             if len(newAccountNumber) != 16:
                 messagebox.showinfo('Error!', 'Account number must be 16-digits')
                 return
-            
             if not newAccountNumber.isdigit():
                 messagebox.showinfo('Error!', 'Account number must all be digits!')
                 return
@@ -99,7 +97,7 @@ class createAccount():
             self.cursor.execute("insert into readings(accountNumber) values(?)", (newAccountNumber,))
 
             self.connection.commit()
-            
+
             messagebox.showinfo("Thank you!", "Thank you for joining EPALCO!")
             self.createAccountWindow.destroy()
 
@@ -116,15 +114,15 @@ class createAccount():
                  text = labelText, 
                  font = ("Arial", fontSize),
                  bg = "#bbbbbb").pack()
-            
-        if showEntry:    
+
+        if sh5wEntry:
 
             newEntry = tk.Entry(whichWindow, 
                                 width = 20,
                                 font = ("Arial", 12),
                                 bg = "#eeeeee")
         else:
-            
+
             newEntry = tk.Entry(whichWindow,
                                 width = 20,
                                 font = ("Arial", 12),

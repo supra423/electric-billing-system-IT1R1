@@ -5,10 +5,11 @@ from PIL import Image, ImageTk
 from payScript import payAll, payOnlyLastMonth
 from datetime import datetime
 
+
 class mainMenu():
 
     def __init__(self, user):
-        
+
         # user is basically a tuple that came from the accountFetch tuple in the loginWindow.py in the login() function
         # user[0] is the name, user[1] is the account number, user[2] is the address
         # this is important so that the program can identify which user is using the main window!
@@ -25,8 +26,8 @@ class mainMenu():
         self.mainWindow.configure(bg = "#bbbbbb")
 
         # Configure the grid layout of the main window
-        self.mainWindow.rowconfigure(0, weight=1)
-        self.mainWindow.columnconfigure(1, weight=1)
+        self.mainWindow.rowconfigure(0, weight = 1)
+        self.mainWindow.columnconfigure(1, weight = 1)
 
         # Sidebar (column 0)
         self.sideBar = tk.Frame(self.mainWindow, bg = '#2c3e50', width = 200)
@@ -50,10 +51,11 @@ class mainMenu():
 
         self.mainButtons("Generate Bill", self.generateBill)
         self.mainButtons("Pay", self.pay)
-        self.mainButtons("View transaction history", self.viewTransactionHistory)
+        self.mainButtons("View transaction history",
+                         self.viewTransactionHistory)
         self.mainButtons("Logout", self.logout)
-
-        self.mainPage() 
+ 
+        self.mainPage()
 
         self.mainWindow.mainloop()
 
@@ -68,7 +70,7 @@ class mainMenu():
                   padx = 10,
                   bg = "#3f5a75",
                   fg = "#ffffff",
-                  font = ("Arial", 16)).pack(pady = 10, fill = "x")
+                  font = ("Arial", 16)).pack(pady=10, fill="x")
 
     def mainPage(self):
         self.clearContent()
@@ -77,11 +79,11 @@ class mainMenu():
         kwhRead = self.cursor.execute("select kWh from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
 
         content = tk.Frame(self.contentFrame, bg = "#bbbbbb")
-        content.grid(row = 1, column = 0, columnspan = 2, sticky = "nw", padx = 20, pady = 20)
-
+        content.grid(row = 1, column = 0, columnspan = 2,
+                     sticky = "nw", padx = 20, pady = 20)
 
         tk.Label(content,
-                text = "Welcome!",
+                 text = "Welcome!",
                  font = ("Arial", 40),
                  bg = "#bbbbbb").grid(row = 0, column = 0, padx = 5, pady = 5, sticky = "w")
 
@@ -93,20 +95,21 @@ class mainMenu():
         tk.Label(content,
                  text = f"Electricity meter: {kwhRead[0]} kWh",
                  font = ("Arial", 30),
-                 bg = "#bbbbbb").grid(row = 2, column = 0, padx = 5, pady = 5, sticky = "w")
+                 bg = "#bbbbbb").grid(row=2, column=0, padx=5, pady=5, sticky="w")
 
         if accountStatusCheck[0] == 'terminated':
             tk.Label(content,
                      text = "Your account has been terminated!",
                      font = ("Arial", 20),
-                     bg = "#bbbbbb").grid(row = 3, column = 0, padx = 5, pady = 5, sticky = "w")
+                     bg = "#bbbbbb").grid(row=3, column=0, padx=5, pady=5, sticky="w")
             tk.Label(content,
                      text = f"Please pay the total balance: ₱{accountStatusCheck[1]:.2f}",
                      font = ("Arial", 20),
                      bg = "#bbbbbb").grid(row = 4, column = 0, padx = 5, pady = 5, sticky = "w")
 
-        #Please pay the total balance!
+        # Please pay the total balance!
         self.bellIconSwitch()
+
     def generateBill(self):
         self.clearContent()
         # readings = (previousReading, currentReading, previousReadingDate, currentReadingDate)
@@ -130,46 +133,54 @@ class mainMenu():
                            padx = 20,
                            pady = 20,
                            sticky = "nsew")
-            
-            billTitle = tk.Label(billFrame,
-                    text = " --- E P A L C O ---",
-                    font = ("Arial", 20, 'italic'),
-                    bg = "#ffffff")
 
-            billTitle.pack(pady = 20)
+            billTitle = tk.Label(billFrame,
+                                 text=" --- E P A L C O ---",
+                                 font=("Arial", 20, 'italic'),
+                                 bg="#ffffff")
+
+            billTitle.pack(pady=20)
 
             textFont = ("Arial", 14)
 
             billBody = tk.Text(billFrame,
-                               height = 17,
-                               width = 50,
-                               font = textFont)
+                               height=17,
+                               width=50,
+                               font=textFont)
             billBody.pack()
 
             billBody.insert('1.0', f"Name: {self.username}\n")
             billBody.insert('2.0', f"Address: {self.address}\n\n")
-            billBody.insert('4.0', f"Billing period: {readings[2]} - {readings[3]}\n")
-            billBody.insert('5.0', f"Previous reading - current reading (kWh): {readings[0]} - {readings[1]}\n")
+            billBody.insert('4.0', f"Billing period: {
+                            readings[2]} - {readings[3]}\n")
+            billBody.insert(
+                '5.0', f"Previous reading - current reading (kWh): {readings[0]} - {readings[1]}\n")
             billBody.insert('6.0', f"Total kWh usage: {totalKwhUsage}\n\n")
             billBody.insert('8.0', f"PAY BEFORE: {readings[4]}\n")
             billBody.insert('9.0', f"Rate: ₱10/kWh\n")
             billBody.insert('10.0', f"Value-added Tax (VAT): 12%\n")
-            billBody.insert('11.0', f"Total payment without VAT: ₱{totalPaymentWithoutVat:.2f}\n")
+            billBody.insert('11.0', f"Total payment without VAT: ₱{
+                            totalPaymentWithoutVat:.2f}\n")
             billBody.insert('12.0', f"Added VAT: ₱{addVat:.2f}\n\n")
-            billBody.insert('14.0', f"Total Payment this billing period: ₱{balanceFetch[1]:.2f}\n")
-            billBody.insert('15.0', f"Unpaid balance last billing period (Ignore if ₱0.00): ₱{balanceFetch[0]:.2f}\n\n")
-            billBody.insert('17.0', f"TOTAL PENDING BALANCE: ₱{balanceFetch[2]:.2f}\n")
+            billBody.insert('14.0', f"Total Payment this billing period: ₱{
+                            balanceFetch[1]:.2f}\n")
+            billBody.insert('15.0', f"Unpaid balance last billing period (Ignore if ₱0.00): ₱{
+                            balanceFetch[0]:.2f}\n\n")
+            billBody.insert('17.0', f"TOTAL PENDING BALANCE: ₱{
+                            balanceFetch[2]:.2f}\n")
 
-            billBody.config(state = 'disabled')
+            billBody.config(state='disabled')
         else:
-            messagebox.showinfo("Notification!", "No bill is currently available!")
+            messagebox.showinfo(
+                "Notification!", "No bill is currently available!")
         self.bellIconSwitch()
 
     def pay(self):
-        self.balance = self.cursor.execute("select pendingBalance, paymentLastBillingPeriod from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
+        self.balance = self.cursor.execute(
+            "select pendingBalance, paymentLastBillingPeriod from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
         self.clearContent()
 
-        if self.balance[0] > 0:    
+        if self.balance[0] > 0:
 
             self.LabelHelperFunction(tk.Label, "Pay Page", 24, "#bbbbbb", 0, False)
             self.LabelHelperFunction(tk.Label, "You have two options when paying:", 20, "#bbbbbb", 1, False)
@@ -180,9 +191,10 @@ class mainMenu():
             self.LabelHelperFunction(tk.Label, f"Pay only last month's bill (Ignore if ₱0.00): ₱{self.balance[1]:.2f}", 20, "#bbbbbb", 4, False)
 
             self.LabelHelperFunction(tk.Button, "Pay only last month's bill", 14, "#ababab", 5, True, lambda: self.buttonPayOnlyFunction("Pay Only Last Month"))
-            
+
         else:
-            messagebox.showinfo("Notification!", "You currently have no pending balance!")
+            messagebox.showinfo(
+                "Notification!", "You currently have no pending balance!")
             return
 
         self.bellIconSwitch()
@@ -194,17 +206,17 @@ class mainMenu():
 
         if buttonCommandBool == False:
             labelOrButton(self.contentFrame,
-                    text = labelText,
-                    font = ("Arial", fontSize),
-                    bg = bgColor).grid(row = whichRow, column = 0, padx = 5, pady = 5, sticky = "w")
+                          text= labelText,
+                          font= ("Arial", fontSize),
+                          bg= bgColor).grid(row = whichRow, column = 0, padx = 5, pady = 5, sticky = "w")
         else:
             labelOrButton(self.contentFrame,
-                    text = labelText,
-                    font = ("Arial", fontSize),
-                    bg = bgColor,
-                    command = buttonPay).grid(row = whichRow, column = 0, padx = 5, pady = 5, sticky = "w")
-    
-    ### Payment window
+                          text= labelText,
+                          font= ("Arial", fontSize),
+                          bg= bgColor,
+                          command= buttonPay).grid(row = whichRow, column = 0, padx = 5, pady = 5, sticky = "w")
+
+    # Payment window
     def buttonPayAllFunction(self, choice):
         self.payWindowWidgets(choice, payAll)
 
@@ -216,29 +228,30 @@ class mainMenu():
         self.payWindow.title(f"{choice}")
         self.payWindow.geometry("400x300")
         self.payWindow.resizable(False, False)
-        self.payWindow.configure(bg = "#bbbbbb")
+        self.payWindow.configure(bg="#bbbbbb")
 
         for i in range(3):
-            self.payWindow.columnconfigure(i, weight = 1)
-            self.payWindow.rowconfigure(i, weight = 1)
+            self.payWindow.columnconfigure(i, weight=1)
+            self.payWindow.rowconfigure(i, weight=1)
 
         tk.Label(self.payWindow,
-                text = "Please enter the\nproper amount:",
-                font = ("Arial", 20),
-                bg = "#bbbbbb").grid(row = 0, column = 1)
+                 text= "Please enter the\nproper amount:",
+                 font= ("Arial", 20),
+                 bg= "#bbbbbb").grid(row = 0, column = 1)
         tk.Label(self.payWindow,
-                text = "₱",
-                font = ("Arial", 16),
-                bg = "#bbbbbb").grid(row = 1, column = 0, pady = 10, sticky = "e")
+                 text= "₱",
+                 font= ("Arial", 16),
+                 bg= "#bbbbbb").grid(row = 1, column = 0, pady = 10, sticky = "e")
 
         self.paymentEntry = tk.Entry(self.payWindow, font = ('Arial', 16))
         self.paymentEntry.grid(row = 1, column = 1, pady = 10)
 
         tk.Button(self.payWindow,
-                text = "PAY",
-                font = ("Arial", 14),
-                bg = "#ababab",
-                command = lambda: self.paymentEntryGet(chosenFunction)).grid(row = 2, column = 2, pady = 10, sticky = "w")
+                  text = "PAY",
+                  font = ("Arial", 14),
+                  bg = "#ababab",
+                  command = lambda: self.paymentEntryGet(chosenFunction)).grid(row = 2, column = 2, pady = 10, sticky = "w")
+
     def paymentEntryGet(self, chosenFunction):
         paymentEntered = self.paymentEntry.get().strip()
         currentDatetime = datetime.now().strftime("%B %d, %Y")
@@ -252,7 +265,8 @@ class mainMenu():
         try:
             paymentEntered = float(paymentEntered)
         except ValueError:
-            messagebox.showinfo("Invalid Input!", "Please enter a valid number!")
+            messagebox.showinfo(
+                "Invalid Input!", "Please enter a valid number!")
             return
         if chosenFunction == payAll:
 
@@ -262,45 +276,56 @@ class mainMenu():
             elif paymentEntered > paymentFetch[2]:
 
                 paymentChange = paymentEntered - paymentFetch[2]
-                messagebox.showinfo("Change!", f"Here is your change: ₱{paymentChange:.2f}")
-                messagebox.showinfo("Payment successful!", "Payment successful! Thank you!")
-                self.insertHistory(self.accountNumber, paymentFetch[2], currentDatetime)
+                messagebox.showinfo("Change!", f"Here is your change: ₱{
+                                    paymentChange:.2f}")
+                messagebox.showinfo("Payment successful!",
+                                    "Payment successful! Thank you!")
+                self.insertHistory(self.accountNumber,
+                                   paymentFetch[2], currentDatetime)
                 payAll(self.accountNumber)
                 self.payWindow.destroy()
 
             elif paymentEntered == paymentFetch[2]:
 
-                messagebox.showinfo("Payment successful!", "Payment successful! Thank you!")
-                self.insertHistory(self.accountNumber, paymentFetch[2], currentDatetime)
+                messagebox.showinfo("Payment successful!",
+                                    "Payment successful! Thank you!")
+                self.insertHistory(self.accountNumber,
+                                   paymentFetch[2], currentDatetime)
                 payAll(self.accountNumber)
                 self.payWindow.destroy()
 
         if chosenFunction == payOnlyLastMonth:
-            
+
             if paymentEntered < paymentFetch[0]:
                 messagebox.showinfo("Error!", "Insufficient amount!")
 
             elif paymentEntered > paymentFetch[0]:
 
                 paymentChange = paymentEntered - paymentFetch[0]
-                messagebox.showinfo("Change!", f"Here is your change: ₱{paymentChange:.2f}")
-                messagebox.showinfo("Payment successful!", "Payment successful! Thank you!")
-                self.insertHistory(self.accountNumber, paymentFetch[0], currentDatetime)
+                messagebox.showinfo("Change!", f"Here is your change: ₱{
+                                    paymentChange:.2f}")
+                messagebox.showinfo("Payment successful!",
+                                    "Payment successful! Thank you!")
+                self.insertHistory(self.accountNumber,
+                                   paymentFetch[0], currentDatetime)
                 payOnlyLastMonth(self.accountNumber)
 
                 self.payWindow.destroy()
 
             elif paymentEntered == paymentFetch[0]:
 
-                messagebox.showinfo("Payment successful!", "Payment successful! Thank you!")
-                self.insertHistory(self.accountNumber, paymentFetch[0], currentDatetime)
+                messagebox.showinfo("Payment successful!",
+                                    "Payment successful! Thank you!")
+                self.insertHistory(self.accountNumber,
+                                   paymentFetch[0], currentDatetime)
                 payOnlyLastMonth(self.accountNumber)
 
                 self.payWindow.destroy()
-    ###        
+    ###
 
     def insertHistory(self, userAccountNumber, userAmountPaid, historyTimestamp):
-        self.cursor.execute("insert into history(accountNumber, amountPaid, timestamp) values(?, ?, ?)", (userAccountNumber, userAmountPaid, historyTimestamp))
+        self.cursor.execute("insert into history(accountNumber, amountPaid, timestamp) values(?, ?, ?)",
+                            (userAccountNumber, userAmountPaid, historyTimestamp))
         self.connection.commit()
 
     def viewTransactionHistory(self):
@@ -310,7 +335,7 @@ class mainMenu():
         historyFrame = tk.Frame(self.contentFrame,
                                 bg = '#ffffff',
                                 bd = 2,
-                                relief = 'solid') 
+                                relief = 'solid')
         historyFrame.grid(row = 0,
                           column = 0,
                           columnspan = 2,
@@ -318,11 +343,11 @@ class mainMenu():
                           pady = 20,
                           sticky = "nsew")
 
-        tk.Label(historyFrame, 
-                 text = "Transaction History Page", 
-                 font = ("Arial", 24), 
-                 bg =  "#ffffff").pack(pady = 20)
-        
+        tk.Label(historyFrame,
+                 text = "Transaction History Page",
+                 font = ("Arial", 24),
+                 bg = "#ffffff").pack(pady = 20)
+
         textFont = ("Arial", 14)
 
         historyBody = tk.Text(historyFrame,
@@ -337,11 +362,11 @@ class mainMenu():
 
         historyBody.pack(side = 'left')
         scrollBar.pack(side = 'right', fill = 'y')
-        
-        historyFetch = self.cursor.execute("select amountPaid, timestamp from history where accountNumber = ? ORDER BY id DESC", (self.accountNumber,)).fetchall()
-        #historyFetch.sort(key = lambda row: historyFetch[0])
 
-        textRow = 1.0 
+        historyFetch = self.cursor.execute("select amountPaid, timestamp from history where accountNumber = ? ORDER BY id DESC", (self.accountNumber,)).fetchall()
+        # historyFetch.sort(key = lambda row: historyFetch[0])
+
+        textRow = 1.0
         for history in historyFetch:
             historyBody.insert(f"{textRow:.1f}", f"On {history[1]}, you have made a payment of ₱{history[0]}\n\n")
             textRow += 2.0
@@ -365,7 +390,8 @@ class mainMenu():
             widget.destroy()
 
     def notificationButton(self):
-        paymentStatusCheck = self.cursor.execute("select paymentStatus, paymentThisBillingPeriod, pendingBalance from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
+        paymentStatusCheck = self.cursor.execute(
+            "select paymentStatus, paymentThisBillingPeriod, pendingBalance from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
         if paymentStatusCheck[0] == 'unpaid' and paymentStatusCheck[2]:
 
             messagebox.showinfo("Notification!", "A new bill is available!")
@@ -375,7 +401,6 @@ class mainMenu():
             messagebox.showinfo("Notification!", "There are currently no notifications!")
 
         self.bellIconSwitch()
-        # self.mainPage()
 
     def bellIconSwitch(self):
         '''
@@ -383,8 +408,8 @@ class mainMenu():
         every time if a notification is available,
         this function gets called every time a user clicks a button
         '''
-        bellFrame = tk.Frame(self.mainWindow, bg = "#bbbbbb")
-        bellFrame.grid(row = 0, column = 1, sticky = "ne", padx = 20, pady = 20)
+        bellFrame = tk.Frame(self.mainWindow, bg="#bbbbbb")
+        bellFrame.grid(row=0, column = 1, sticky = "ne", padx = 20, pady = 20)
 
         # this serves as a flag to determine if the user has already viewed their notifications or not
         # the notifcations table updates every time a bill is generated
@@ -392,13 +417,12 @@ class mainMenu():
 
         if self.viewedNotification[0] == 'true':
             img = Image.open("images/defaultBell.png")
-        
+
         else:
             img = Image.open("images/notifiedBell.png")
-        
 
         img = img.resize((80, 80))
-        self.bellIcon = ImageTk.PhotoImage(img)  
+        self.bellIcon = ImageTk.PhotoImage(img)
         tk.Button(bellFrame,
                   image = self.bellIcon,
                   fg = "#bbbbbb",

@@ -3,6 +3,29 @@ import time
 from datetime import datetime, timedelta
 import schedule
 
+"""
+
+This script has two functions that are scheduled to run in the 20th and 21st day, respectively
+
+in the 1st function, think of it as reading the user's meter, this function basically determines the kwh
+consumption of every user by taking the currentReading value column and assigning it to previousReading column
+while the currentReading's value gets assigned by kWh column from the accounts table so basically
+
+previousReading = currentReading
+and then
+currentReading = kWh (from accounts table)
+
+same goes for the readings dates:
+previousReadingDate = currentReadingDate
+currentReadingDate = datetime.now()
+
+and then the due date is assigned 10 days ahead the datetime.now()
+
+in the 2nd function, the readings are then calculated for each user and generates a bill for every user 
+this then sets every account's paymentStatus to 'unpaid' and their notifications viewed column to 'false'
+
+"""
+
 def job1():
     if datetime.now().day != 20:
         return
@@ -18,10 +41,10 @@ def job1():
 
     # for example, row1 = ('1234123412341234', 123, 400, "date", "date", "dueDate")
     for row1 in accountFetch1:
-        
+
         # first check the account if it is terminated or not
         accountStatusCheck1 = cursor.execute("select accountStatus from accounts where accountNumber = ?", (row1[0],)).fetchone()
-    
+
         if accountStatusCheck1[0] == 'active':
             cursor.execute("update readings set previousReading = ?, previousReadingDate = ? where accountNumber = ?", (row1[2], row1[4], row1[0]))
         else:
@@ -54,7 +77,7 @@ def job2():
         totalPaymentWithoutVat = 10 * (reading[2] - reading[1])
         addVat = totalPaymentWithoutVat * 0.12
         totalPaymentWithVat = addVat + totalPaymentWithoutVat
-        
+
         # pendingBalance gets appended, while paymentThisBillingPeriod gets overwritten 
         cursor.execute("update accounts set pendingBalance = pendingBalance + ?, paymentThisBillingPeriod = ? where accountNumber = ?", (totalPaymentWithVat, totalPaymentWithVat,reading[0]))
 
