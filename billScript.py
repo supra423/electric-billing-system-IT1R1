@@ -2,6 +2,7 @@ import sqlite3
 import time
 from datetime import datetime, timedelta
 import schedule
+import json
 
 """
 
@@ -72,14 +73,29 @@ def job2():
 
     pendingBalanceCalculate = cursor.execute("select accountNumber, previousReading, currentReading from readings").fetchall()
 
+    # now instead of kWh rate being hardcoded into the source code
+    # it can now be accessed in the json file, this allows kWh rate
+    # to be easily changed instead of actually changing the code itself
+    try:
+        with open('configs.json', 'r') as file:
+            data = json.load(file)
+            kWhRateFetch = data['kWhRate']
+
+    except FileNotFoundError:
+        print("Error: JSON File not found!")
+    except json.JSONDecodeError:
+        print("Error: Invalid JSON format!")
+    except Exception as e:
+        print(f"An unexpected error occured: {e}")
+
     for reading in pendingBalanceCalculate:
-        # 10 pesos per kWh and 12% value added tax
-        totalPaymentWithoutVat = 10 * (reading[2] - reading[1])
+        # kWhRateFetch is from the configs.json file
+        totalPaymentWithoutVat = kWhRateFetch * (reading[2] - reading[1])
         addVat = totalPaymentWithoutVat * 0.12
         totalPaymentWithVat = addVat + totalPaymentWithoutVat
 
         # pendingBalance gets appended, while paymentThisBillingPeriod gets overwritten 
-        cursor.execute("update accounts set pendingBalance = pendingBalance + ?, paymentThisBillingPeriod = ? where accountNumber = ?", (totalPaymentWithVat, totalPaymentWithVat,reading[0]))
+        cursor.execute("update accounts set pendingBalance = pendingBalance + ?, paymentThisBillingPeriod = ? where accountNumber = ?", (totalPaymentWithVat, totalPaymentWithVat, reading[0]))
 
     accountFetch3 = cursor.execute("select accountNumber from accounts where paymentStatus = 'paid'").fetchall()
 

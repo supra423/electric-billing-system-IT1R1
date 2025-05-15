@@ -4,7 +4,7 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 from payScript import payAll, payOnlyLastMonth
 from datetime import datetime
-
+import json
 
 class mainMenu():
 
@@ -78,8 +78,7 @@ class mainMenu():
     def mainPage(self):
         self.clearContent()
 
-        accountsCheck = self.cursor.execute("select accountStatus, pendingBalance, kWh from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
-        # kwhRead = self.cursor.execute("select kWh from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
+        accountsCheck = self.cursor.execute("select accountStatus, pendingBalance, paymentLastBillingPeriod, kWh from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
         disconnectionDateFetch = self.cursor.execute("select disconnectionDate from readings where accountNumber = ?", (self.accountNumber,)).fetchone()
 
         content = tk.Frame(self.contentFrame, bg = "#bbbbbb")
@@ -88,7 +87,7 @@ class mainMenu():
 
         self.labelHelperFunction(tk.Label, self.contentFrame, "Welcome!", 40, "#bbbbbb", 0, False)
         self.labelHelperFunction(tk.Label, self.contentFrame, self.username, 40, "#bbbbbb", 1, False)
-        self.labelHelperFunction(tk.Label, self.contentFrame, f"Electricity meter: {accountsCheck[2]} kWh", 30, "#bbbbbb", 2, False)
+        self.labelHelperFunction(tk.Label, self.contentFrame, f"Electricity meter: {accountsCheck[3]} kWh", 30, "#bbbbbb", 2, False)
 
         if accountsCheck[0] == 'terminated':
             self.labelHelperFunction(tk.Label, self.contentFrame, "Your account has been closed!", 20, "#bbbbbb", 3, False)
@@ -98,7 +97,8 @@ class mainMenu():
         if accountsCheck[0]  == 'almost terminated':
             self.labelHelperFunction(tk.Label, self.contentFrame, "Your account is about to close!", 20, "#bbbbbb", 3, False)
             self.labelHelperFunction(tk.Label, self.contentFrame, f"Please atleast pay last month's bill before: {disconnectionDateFetch[0]}", 20, "#bbbbbb", 4, False)
-            self.labelHelperFunction(tk.Label, self.contentFrame, f"Last month's bill payment: ₱{accountsCheck[1]:.2f}", 20, "#bbbbbb", 5, False)
+            self.labelHelperFunction(tk.Label, self.contentFrame, f"Last month's bill payment: ₱{accountsCheck[2]:.2f}", 20, "#bbbbbb", 5, False)
+            self.labelHelperFunction(tk.Label, self.contentFrame, f"Total pending balance: ₱{accountsCheck[1]:.2f}", 20, "#bbbbbb", 6, False)
         # Please pay the total balance!
         self.bellIconSwitch()
  
@@ -110,10 +110,23 @@ class mainMenu():
 
         balanceFetch = self.cursor.execute("select paymentLastBillingPeriod, paymentThisBillingPeriod, pendingBalance, paymentStatus from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
 
+        try:
+            with open('configs.json', 'r') as file:
+                data = json.load(file)
+                self.kWhRateFetch = data['kWhRate']
+
+        except FileNotFoundError:
+            print("Error: JSON File not found!")
+        except json.JSONDecodeError:
+            print("Error: Invalid JSON format!")
+        except Exception as e:
+            print(f"An unexpected error occured: {e}")
+
         if balanceFetch[3] == 'unpaid' and balanceFetch[2]:
+
             totalKwhUsage = readings[1] - readings[0]
 
-            totalPaymentWithoutVat = totalKwhUsage * 10
+            totalPaymentWithoutVat = totalKwhUsage * self.kWhRateFetch
             addVat = totalPaymentWithoutVat * 0.12
 
             billFrame = tk.Frame(self.contentFrame,
@@ -148,7 +161,7 @@ class mainMenu():
             billBody.insert('5.0', f"Previous reading - current reading (kWh): {readings[0]} - {readings[1]}\n")
             billBody.insert('6.0', f"Total kWh usage: {totalKwhUsage}\n\n")
             billBody.insert('8.0', f"PAY BEFORE: {readings[4]}\n")
-            billBody.insert('9.0', f"Rate: ₱10/kWh\n")
+            billBody.insert('9.0', f"Rate: ₱{self.kWhRateFetch}/kWh\n")
             billBody.insert('10.0', f"Value-added Tax (VAT): 12%\n")
             billBody.insert('11.0', f"Total payment without VAT: ₱{totalPaymentWithoutVat:.2f}\n")
             billBody.insert('12.0', f"Added VAT: ₱{addVat:.2f}\n\n")

@@ -1,6 +1,7 @@
 import sqlite3
 import tkinter as tk
 from tkinter import messagebox
+import json
 
 class createAccount():
 
@@ -15,6 +16,19 @@ class createAccount():
         self.createAccountWindow.resizable(False, False)
         self.createAccountWindow.configure(bg = "#bbbbbb")
 
+        try:
+            with open('configs.json', 'r') as file:
+                data = json.load(file)
+                self.installationFeeFetch = float(data['installationFee'])
+
+        except FileNotFoundError:
+            print("Error: JSON File not found!")
+        except json.JSONDecodeError:
+            print("Error: Invalid JSON format!")
+        except Exception as e:
+            print(f"An unexpected error occured: {e}")
+
+
         # new name
         self.newNameEntry = self.labelAndEntry(self.createAccountWindow, True, "Enter name:", 20)
         # new account number
@@ -26,7 +40,7 @@ class createAccount():
         # confirm new password
         self.newPasswordConfirmEntry = self.labelAndEntry(self.createAccountWindow, False, "Confirm new password:", 20)
         # initial payment for installation
-        self.installationFee = self.labelAndEntry(self.createAccountWindow, True, "Installation fee\n(Php. 5,000.00):", 20)
+        self.installationFee = self.labelAndEntry(self.createAccountWindow, True, f"Installation fee\n(₱{self.installationFeeFetch:.2f}):", 20)
 
         self.createAccountWindow.bind('<Return>', lambda event: self.insertNewAccount())
 
@@ -83,11 +97,12 @@ class createAccount():
 
             installationFee = float(installationFee)
 
-            if installationFee < 5000:
+            # comparing the installation fee to the installation fee fetched from the configs.json file
+            if installationFee < self.installationFeeFetch:
                 messagebox.showinfo("Invalid payment!", "Please pay the proper amount!")
                 return
-            elif installationFee > 5000:
-                messagebox.showinfo("Change", f"Here is your change: {installationFee - 5000:.2f}")
+            elif installationFee > self.installationFeeFetch:
+                messagebox.showinfo("Change", f"Here is your change: {installationFee - self.installationFeeFetch:.2f}")
 
             self.cursor.execute("insert into accounts(name, accountNumber, password, address) values(?, ?, ?, ?)", 
                                 (newName, newAccountNumber, newPassword, newHomeAddress))
@@ -115,7 +130,7 @@ class createAccount():
                  font = ("Arial", fontSize),
                  bg = "#bbbbbb").pack()
 
-        if sh5wEntry:
+        if showEntry:
 
             newEntry = tk.Entry(whichWindow, 
                                 width = 20,
