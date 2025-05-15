@@ -2,7 +2,7 @@ import sqlite3
 import tkinter as tk
 from tkinter import messagebox
 import json
-
+from PIL import Image, ImageTk
 class createAccount():
 
     def __init__(self):
@@ -16,6 +16,9 @@ class createAccount():
         self.createAccountWindow.resizable(False, False)
         self.createAccountWindow.configure(bg = "#bbbbbb")
 
+        self.createAccountWindow.columnconfigure(0, weight = 1)
+        self.createAccountWindow.rowconfigure(1, weight = 1)
+
         try:
             with open('configs.json', 'r') as file:
                 data = json.load(file)
@@ -28,28 +31,46 @@ class createAccount():
         except Exception as e:
             print(f"An unexpected error occured: {e}")
 
+        self.widgetFrame = tk.Frame(self.createAccountWindow, bg = "#bbbbbb")
+        self.widgetFrame.grid(row = 0, column = 0, pady = 5, sticky = "ns")
 
         # new name
-        self.newNameEntry = self.labelAndEntry(self.createAccountWindow, True, "Enter name:", 20)
+        self.newNameEntry = self.labelAndEntry(self.widgetFrame, True, "Enter name:", 20)
         # new account number
-        self.newAccountNumberEntry = self.labelAndEntry(self.createAccountWindow, True, "Enter new account number\n(Must be 16 digits long):", 20)
+        self.newAccountNumberEntry = self.labelAndEntry(self.widgetFrame, True, "Enter new account number\n(Must be 16 digits long):", 20)
         # home address
-        self.newHomeAddressEntry = self.labelAndEntry(self.createAccountWindow, True, "Enter home address:", 20)
+        self.newHomeAddressEntry = self.labelAndEntry(self.widgetFrame, True, "Enter home address:", 20)
         # new password 
-        self.newPasswordEntry = self.labelAndEntry(self.createAccountWindow, False, "Enter new password:", 20)
+        self.newPasswordEntry = self.labelAndEntry(self.widgetFrame, False, "Enter new password:", 20)
         # confirm new password
-        self.newPasswordConfirmEntry = self.labelAndEntry(self.createAccountWindow, False, "Confirm new password:", 20)
+        self.newPasswordConfirmEntry = self.labelAndEntry(self.widgetFrame, False, "Confirm new password:", 20)
         # initial payment for installation
-        self.installationFee = self.labelAndEntry(self.createAccountWindow, True, f"Installation fee\n(₱{self.installationFeeFetch:.2f}):", 20)
+        self.installationFee = self.labelAndEntry(self.widgetFrame, True, f"Installation fee\n(₱{self.installationFeeFetch:.2f}):", 20)
 
         self.createAccountWindow.bind('<Return>', lambda event: self.insertNewAccount())
 
-        tk.Button(self.createAccountWindow, 
+        self.buttonFrame = tk.Frame(self.createAccountWindow, bg = "#bbbbbb")
+
+        self.buttonFrame.rowconfigure(0, weight = 1)
+        self.buttonFrame.columnconfigure(1, weight = 1)
+
+        self.buttonFrame.grid(row = 1, column = 0, pady = 5)
+
+        self.helpButton = tk.Button(self.buttonFrame,
+                                    text = "Help?",
+                                    width = 12,
+                                    height = 2,
+                                    bg = "#cccccc")
+        self.helpButton.grid(row = 0, column = 0, padx = 60, pady = 10)
+
+        self.newAccountButton = tk.Button(self.buttonFrame, 
                 text = "Create \nnew account", 
-                width = 15, 
+                width = 12, 
                 height = 2, 
                 command = self.insertNewAccount,
-                bg = "#cccccc").pack(side="right", padx=20)
+                bg = "#cccccc")
+
+        self.newAccountButton.grid(row = 0, column = 1, padx = 60, pady = 10)
 
         self.createAccountWindow.mainloop()
 
@@ -128,7 +149,7 @@ class createAccount():
         tk.Label(whichWindow,
                  text = labelText, 
                  font = ("Arial", fontSize),
-                 bg = "#bbbbbb").pack()
+                 bg = "#bbbbbb").grid(column = 0)
 
         if showEntry:
 
@@ -144,5 +165,6 @@ class createAccount():
                                 show = "*",
                                 bg = "#eeeeee")
 
-        newEntry.pack()
+        newEntry.grid(column = 0)
         return newEntry
+

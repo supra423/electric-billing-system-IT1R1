@@ -93,7 +93,7 @@ class mainMenu():
             self.labelHelperFunction(tk.Label, self.contentFrame, "Your account has been closed!", 20, "#bbbbbb", 3, False)
             self.labelHelperFunction(tk.Label, self.contentFrame, f"Please pay the total balance: ₱{accountsCheck[1]:.2f}", 20, "#bbbbbb", 4, False)
         # Please pay the total balance!
-        
+
         if accountsCheck[0]  == 'almost terminated':
             self.labelHelperFunction(tk.Label, self.contentFrame, "Your account is about to close!", 20, "#bbbbbb", 3, False)
             self.labelHelperFunction(tk.Label, self.contentFrame, f"Please atleast pay last month's bill before: {disconnectionDateFetch[0]}", 20, "#bbbbbb", 4, False)
@@ -101,7 +101,7 @@ class mainMenu():
             self.labelHelperFunction(tk.Label, self.contentFrame, f"Total pending balance: ₱{accountsCheck[1]:.2f}", 20, "#bbbbbb", 6, False)
         # Please pay the total balance!
         self.bellIconSwitch()
- 
+        self.helpIcon() 
 
     def generateBill(self):
         self.clearContent()
@@ -419,7 +419,7 @@ class mainMenu():
         this function gets called every time a user clicks a button
         '''
         bellFrame = tk.Frame(self.mainWindow, bg="#bbbbbb")
-        bellFrame.grid(row=0, column = 1, sticky = "ne", padx = 20, pady = 20)
+        bellFrame.grid(row = 0, column = 1, sticky = "ne", padx = 20, pady = 20)
 
         # this serves as a flag to determine if the user has already viewed their notifications or not
         # the notifcations table updates every time a bill is generated
@@ -442,3 +442,20 @@ class mainMenu():
                   width = 50,
                   height = 50,
                   command = self.notificationButton).pack()
+
+    def helpIcon(self):
+
+        helpFrame = tk.Frame(self.mainWindow, bg = "#bbbbbb")
+        helpFrame.place(relx = 1.0, rely = 1.0, anchor = "se")
+
+        img = Image.open("images/helpIcon.png")
+
+        img = img.resize((80, 80))
+        self.helpIcon = ImageTk.PhotoImage(img)
+
+        tk.Button(helpFrame,
+                  image = self.helpIcon,
+                  fg = "#bbbbbb",
+                  bg = "#bbbbbb",
+                  bd = 0,
+                  activebackground = "#bbbbbb").pack()
