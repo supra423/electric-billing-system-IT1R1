@@ -5,6 +5,7 @@ from PIL import Image, ImageTk
 from payScript import payAll, payOnlyLastMonth
 from datetime import datetime
 import json
+from helpWindow import helpWindow
 
 class mainMenu():
 
@@ -101,7 +102,8 @@ class mainMenu():
             self.labelHelperFunction(tk.Label, self.contentFrame, f"Total pending balance: ₱{accountsCheck[1]:.2f}", 20, "#bbbbbb", 6, False)
         # Please pay the total balance!
         self.bellIconSwitch()
-        self.helpIcon() 
+
+        self.helpIcon()
 
     def generateBill(self):
         self.clearContent()
@@ -458,4 +460,8 @@ class mainMenu():
                   fg = "#bbbbbb",
                   bg = "#bbbbbb",
                   bd = 0,
-                  activebackground = "#bbbbbb").pack()
+                  activebackground = "#bbbbbb",
+                  command = self.helpButtonCommand).pack()
+
+    def helpButtonCommand(self):
+        helpWindow()

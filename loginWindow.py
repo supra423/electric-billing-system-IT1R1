@@ -2,7 +2,7 @@ import sqlite3
 import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
-
+from helpWindow import helpWindow
 from windowMain import mainMenu
 
 class loginWindow():
@@ -69,7 +69,8 @@ class loginWindow():
                                     text = "Help?",
                                     width = 15,
                                     height = 2,
-                                    bg = "#cccccc")
+                                    bg = "#cccccc",
+                                    command = self.helpButtonCommand)
         self.helpButton.grid(row = 0, column = 0, padx = 60, pady = 10)
 
         self.loginWindow.mainloop()
@@ -80,6 +81,9 @@ class loginWindow():
         # open the create account window but I decided to just
         # use lazy import instead
         createAccount()
+
+    def helpButtonCommand(self):
+        helpWindow()
 
     def login(self):
         try:

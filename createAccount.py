@@ -3,6 +3,8 @@ import tkinter as tk
 from tkinter import messagebox
 import json
 from PIL import Image, ImageTk
+from helpWindow import helpWindow
+
 class createAccount():
 
     def __init__(self):
@@ -60,7 +62,8 @@ class createAccount():
                                     text = "Help?",
                                     width = 12,
                                     height = 2,
-                                    bg = "#cccccc")
+                                    bg = "#cccccc",
+                                    command = self.helpButtonCommand)
         self.helpButton.grid(row = 0, column = 0, padx = 60, pady = 10)
 
         self.newAccountButton = tk.Button(self.buttonFrame, 
@@ -140,6 +143,10 @@ class createAccount():
         except Exception as e:
             messagebox.showinfo("Error!", "Error, please try again!\n")        
             print(e)
+
+    def helpButtonCommand(self):
+        helpWindow()
+
     def labelAndEntry(self, whichWindow, showEntry, labelText, fontSize):
         '''
         just a helper function to reduce the amount of lines
