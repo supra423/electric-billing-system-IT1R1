@@ -50,6 +50,8 @@ class createAccount():
         self.installationFee = self.labelAndEntry(self.widgetFrame, True, f"Installation fee\n(₱{self.installationFeeFetch:.2f}):", 20)
 
         self.createAccountWindow.bind('<Return>', lambda event: self.insertNewAccount())
+        self.createAccountWindow.bind('<Escape>', lambda event: self.createAccountWindow.destroy())
+
 
         self.buttonFrame = tk.Frame(self.createAccountWindow, bg = "#bbbbbb")
 

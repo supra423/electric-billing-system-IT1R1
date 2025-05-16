@@ -36,6 +36,7 @@ class loginWindow():
         self.passwordEntry = self.labelAndEntry(self.widgetFrame, False, "Enter Password:", 20, 5, 5)
 
         self.loginWindow.bind('<Return>', lambda event: self.login())
+        self.loginWindow.bind('<Escape>', lambda event: self.loginWindow.destroy())
 
         self.buttonFrame = tk.Frame(self.loginWindow, bg = "#bbbbbb")
 

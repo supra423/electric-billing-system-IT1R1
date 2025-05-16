@@ -36,4 +36,6 @@ class helpWindow():
 
         self.scrollBar.grid(row = 0, column = 1, sticky = "ns", rowspan = 3)
 
+        self.helpWindow.bind('<Escape>', lambda event: self.helpWindow.destroy())
+        
         self.helpWindow.mainloop()
