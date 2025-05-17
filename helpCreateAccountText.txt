@@ -1,0 +1,16 @@
+This is the create acccount window
+This is where you are going to create an account.
+Fill each entries properly.
+
+In the account number entry, you can add as much 
+spaces as you like between numbers to improve 
+readability. Regardless if whether or not you
+placed spaces, the system will automatically remove
+those spaces before inserting your account to the
+database!
+
+When an account has been successfully created, that
+particular account is then inserted into the
+billing system's database and you will now be
+able to login to the account 
+you just created!

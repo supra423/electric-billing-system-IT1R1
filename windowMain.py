@@ -64,6 +64,7 @@ class mainMenu():
 
 
     def confirmExit(self, event=None):
+        from loginWindow import loginWindow 
         if messagebox.askokcancel("Quit", "Do you really want to Exit?"):
             self.mainWindow.destroy()
         
@@ -378,9 +379,7 @@ class mainMenu():
         self.bellIconSwitch()
 
     def logout(self):
-        from loginWindow import loginWindow
-        self.mainWindow.destroy()
-        loginWindow()
+        self.confirmExit()
 
     def clearContent(self):
         '''

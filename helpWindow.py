@@ -28,8 +28,8 @@ class helpWindow():
 
         self.helpBody = tk.Text(self.helpFrame,
                                 height = 20,
-                                width = 35,
-                                font = ("Arial", 14),
+                                width = 45,
+                                font = ("Arial", 12),
                                 bg = "#ffffff")
         self.helpBody.grid(row = 0, column = 0)
 
@@ -49,18 +49,26 @@ class helpWindow():
         elif self.whichWindow == "windowMain":
             self.windowMainHelp()
 
-        def loginWindowHelp(self):
-            with open("helpLoginWindowText.txt", "r") as file:
-                fetchedText = file.read()
-
-            helpBody.insert('1.0', f"{fetchedText}\n")
-
-        def createAccountHelp(self):
-            pass
-
-        def windowMainHelp(self):
-            pass
-
         self.helpWindow.bind('<Escape>', lambda event: self.helpWindow.destroy())
 
         self.helpWindow.mainloop()
+
+    def loginWindowHelp(self):
+        with open("helpLoginWindowText.txt", "r") as file:
+            fetchedText = file.read()
+
+        self.helpBody.insert('1.0', f"{fetchedText}\n")
+        self.helpBody.config(state='disabled')
+
+    def createAccountHelp(self):
+        with open("helpCreateAccountText.txt", "r") as file:
+            fetchedText = file.read()
+
+        self.helpBody.insert('1.0', f"{fetchedText}\n")
+        self.helpBody.config(state='disabled')
+
+
+    def windowMainHelp(self):
+        pass
+
+
