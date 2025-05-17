@@ -30,6 +30,8 @@ class mainMenu():
         self.mainWindow.rowconfigure(0, weight = 1)
         self.mainWindow.columnconfigure(1, weight = 1)
 
+        self.mainWindow.bind('<Escape>', self.confirmExit)
+
         # Sidebar (column 0)
         self.sideBar = tk.Frame(self.mainWindow, bg = '#2c3e50', width = 200)
         self.sideBar.grid(row = 0, column = 0, sticky = "ns")
@@ -59,6 +61,12 @@ class mainMenu():
         self.mainPage()
 
         self.mainWindow.mainloop()
+
+
+    def confirmExit(self, event=None):
+        if messagebox.askokcancel("Quit", "Do you really want to Exit?"):
+            self.mainWindow.destroy()
+        
 
     def mainButtons(self, buttonText, buttonCommand):
         """
@@ -453,6 +461,7 @@ class mainMenu():
         img = Image.open("images/helpIcon.png")
 
         img = img.resize((100, 100))
+        img = img.resize((80, 80))
         self.helpIconImage = ImageTk.PhotoImage(img)
 
         tk.Button(helpFrame,

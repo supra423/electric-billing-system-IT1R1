@@ -61,4 +61,6 @@ class helpWindow():
         def windowMainHelp(self):
             pass
 
+        self.helpWindow.bind('<Escape>', lambda event: self.helpWindow.destroy())
+
         self.helpWindow.mainloop()
