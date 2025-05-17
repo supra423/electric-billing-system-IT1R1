@@ -452,11 +452,11 @@ class mainMenu():
 
         img = Image.open("images/helpIcon.png")
 
-        img = img.resize((80, 80))
-        self.helpIcon = ImageTk.PhotoImage(img)
+        img = img.resize((100, 100))
+        self.helpIconImage = ImageTk.PhotoImage(img)
 
         tk.Button(helpFrame,
-                  image = self.helpIcon,
+                  image = self.helpIconImage,
                   fg = "#bbbbbb",
                   bg = "#bbbbbb",
                   bd = 0,
@@ -464,4 +464,6 @@ class mainMenu():
                   command = self.helpButtonCommand).pack()
 
     def helpButtonCommand(self):
-        helpWindow()
+        helpWindow("windowMain")
+
+

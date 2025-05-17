@@ -83,7 +83,7 @@ class loginWindow():
         createAccount()
 
     def helpButtonCommand(self):
-        helpWindow()
+        helpWindow("loginWindow")
 
     def login(self):
         try:

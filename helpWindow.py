@@ -1,7 +1,11 @@
 import tkinter as tk
+from tkinter import messagebox
 
 class helpWindow():
-    def __init__(self):
+    def __init__(self, whichWindow):
+
+        self.whichWindow = whichWindow
+
         self.helpWindow = tk.Tk()
         self.helpWindow.title("Help?")
         self.helpWindow.geometry("500x500")
@@ -35,5 +39,26 @@ class helpWindow():
         self.helpBody.configure(yscrollcommand = self.scrollBar.set)
 
         self.scrollBar.grid(row = 0, column = 1, sticky = "ns", rowspan = 3)
+
+        if self.whichWindow == "loginWindow":
+            self.loginWindowHelp()
+
+        elif self.whichWindow == "createAccount":
+            self.createAccountHelp()
+
+        elif self.whichWindow == "windowMain":
+            self.windowMainHelp()
+
+        def loginWindowHelp(self):
+            with open("helpLoginWindowText.txt", "r") as file:
+                fetchedText = file.read()
+
+            helpBody.insert('1.0', f"{fetchedText}\n")
+
+        def createAccountHelp(self):
+            pass
+
+        def windowMainHelp(self):
+            pass
 
         self.helpWindow.mainloop()

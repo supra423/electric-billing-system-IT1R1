@@ -145,7 +145,7 @@ class createAccount():
             print(e)
 
     def helpButtonCommand(self):
-        helpWindow()
+        helpWindow("createAccount")
 
     def labelAndEntry(self, whichWindow, showEntry, labelText, fontSize):
         '''

@@ -1,0 +1,9 @@
+Welcome to the EPALCO Electic Billing System!
+If you are new around here, just press the
+create account button to create an account!
+
+After successfully creating an account, just
+enter your account number and then your password.
+
+You can put spaces between numbers in the account
+number.
