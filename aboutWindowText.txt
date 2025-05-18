@@ -1,0 +1,28 @@
+EPALCO: AUTOMATED ELECTRIC BILLING SYSTEM
+
+IT121 COMPUTER PROGRAMMING
+FINALS PERFORMANCE INNOVATIVE TASK
+
+BSIT-1R1
+
+University of Science and Technology of
+Southern Philippines, Cagayan de Oro Campus
+
+Date Started: April 27, 2025
+Date Finished: May 18, 2025
+
+Group members:
+ROA, Alexus Enzo
+MORENO, Dennis, Jr.
+NAZARENO, Charles Archie
+YU, Mark Lester
+GUMATAY, Nick Adrienne
+
+Note from Alexus, the main developer of this project:
+Hi! This may not be a very big project, but
+I am very proud of this project! If you want to use
+my project for studying or you want to use this
+as a reference for another project, you are completely
+free to do so! Just at least give credits, I won't
+hunt you down though if you wont (lol). Thank you for
+using my project!

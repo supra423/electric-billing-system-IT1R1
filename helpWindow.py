@@ -7,7 +7,7 @@ class helpWindow():
         self.whichWindow = whichWindow
 
         self.helpWindow = tk.Tk()
-        self.helpWindow.title("Help?")
+        self.helpWindow.title(f"{self.whichWindow}")
         self.helpWindow.geometry("500x500")
         self.helpWindow.configure(bg = "#bbbbbb")
         self.helpWindow.resizable(False, False)
@@ -49,6 +49,9 @@ class helpWindow():
         elif self.whichWindow == "windowMain":
             self.windowMainHelp()
 
+        elif self.whichWindow == "about":
+            self.aboutWindow()
+
         self.helpWindow.bind('<Escape>', lambda event: self.helpWindow.destroy())
 
         self.helpWindow.mainloop()
@@ -69,6 +72,19 @@ class helpWindow():
 
 
     def windowMainHelp(self):
-        pass
+        with open("helpWindowMainText.txt", "r") as file:
+            fetchedText = file.read()
+
+        self.helpBody.insert('1.0', f"{fetchedText}\n")
+        self.helpBody.config(state='disabled')
+
+    def aboutWindow(self):
+        with open("aboutWindowText.txt", "r") as file:
+            fetchedText = file.read()
+
+        self.helpBody.insert('1.0', f"{fetchedText}\n")
+        self.helpBody.config(state='disabled')
+
+
 
 

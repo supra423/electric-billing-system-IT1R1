@@ -1,0 +1,111 @@
+Welcome to the main window of the billing
+system!
+
+The first thing you should be able to see
+is your name.
+
+This main window contains a lot of buttons
+so let's go through all of them to try and
+clear things up!
+
+Buttons:
+ - <E P A L C O>
+ - <Generate Bill>
+ - <Pay>
+ - <View Transaction History>
+ - <Logout>
+ - <Notification button> (bell icon)
+ - <Help button> ("?" icon)
+
+ 1. <E P A L C O>
+
+ -> This button is just the main page
+ button which shows your name and then
+ your electricity meter.
+ The electricity meter should update every
+ day at 12:00AM, the electricity meter uses
+ kWh measurement to determine total
+ electricity consumption for the entire
+ billing period.
+
+ 2. <Generate Bill>
+
+ ->In the 20th day of the month, meter readings
+ are done automatically by the system. This
+ records every user's current reading and 
+ their previous reading, and then on the 21st
+ day, the bill is then generated and you are
+ going to have to pay it in the pay page by
+ clicking the <Pay> button.
+
+ The bill contains a lot of information such as:
+ - the billing period dates (previous & current)
+ - meter reading for (previous & current)
+ - the total kWh usage
+ - pay before
+ - the rate
+ - value added tax
+ - total payment without value added tax
+ - added value added tax
+ - total payment last billing period
+ - total payment this billing period
+ - total pending balance
+
+Most of the contents of the bill are self
+explanatory but let's clear up some things.
+
+The total payment is calculated like this
+pay = (previous - current) * rate
+addVat = ((previous - current) * rate) * VAT
+FINAL = pay + addVat
+
+You must pay "BEFORE" the date given by the
+"PAY BEFORE".
+
+If you are not able to pay this billing period,
+don't worry! Your account won't be closed and
+you absolutely won't get your electricity cut
+off but they payment you had last billing
+period will pile up the next billing period!
+So make sure that your payment is ready! If
+you still failed to pay the 2nd time, your
+account will be given 2 days to pay the pending
+balance or at least pay last month's bill to
+avoid getting your account closed. If all else
+fails, your account will be closed and your
+electricity will eventually be cut off. If you
+want to reopen your account, please pay the
+entire pending balance!
+
+3. <Pay>
+
+-> As mentioned earlier, you have two options when
+paying, you can either pay the entire pending
+balance, or at least pay last month's unpaid
+balance (If you did not paid last month). After
+choosing which option, you will be redirected
+to a window to pay the proper amount and then
+after successfully paying, you will receive the
+proper amouont of change.
+
+4. <View transaction history>
+
+-> Each payment you made will be recorded and saved
+in the system's database and you are given the option
+to be able to view each transaction you have made
+throughout the existence of your account. This may
+act as some sort of payment receipt.
+
+5. <Logout>
+
+-> This will return you to the login window.
+
+6. <Notification button>
+
+-> Everytime a bill is generated, you will receive
+a notification that will let you know that a new bill
+has been generated.
+
+7. <Help button>
+
+-> This is the button you used to read this message!

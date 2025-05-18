@@ -54,10 +54,10 @@ class mainMenu():
 
         self.mainButtons("Generate Bill", self.generateBill)
         self.mainButtons("Pay", self.pay)
-        self.mainButtons("View transaction history",
-                         self.viewTransactionHistory)
+        self.mainButtons("View transaction history", self.viewTransactionHistory)
+        self.mainButtons("About", self.aboutButton)
         self.mainButtons("Logout", self.logout)
- 
+
         self.mainPage()
 
         self.mainWindow.mainloop()
@@ -460,7 +460,6 @@ class mainMenu():
         img = Image.open("images/helpIcon.png")
 
         img = img.resize((100, 100))
-        img = img.resize((80, 80))
         self.helpIconImage = ImageTk.PhotoImage(img)
 
         tk.Button(helpFrame,
@@ -468,10 +467,13 @@ class mainMenu():
                   fg = "#bbbbbb",
                   bg = "#bbbbbb",
                   bd = 0,
+                  width = 30,
+                  height = 30,
                   activebackground = "#bbbbbb",
-                  command = self.helpButtonCommand).pack()
+                  command = self.helpButtonCommand).pack(pady = 30, padx = 30)
 
     def helpButtonCommand(self):
         helpWindow("windowMain")
 
-
+    def aboutButton(self):
+        helpWindow("about")
