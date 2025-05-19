@@ -41,8 +41,10 @@ def payOnlyLastMonth(userAccountNumber):
     connection = sqlite3.connect('database.s3db')
     cursor = connection.cursor()
 
+    # Fetch the amount that needs to be paid for the previous billing period
     paymentLastBillingPeriodFetch = cursor.execute("select paymentLastBillingPeriod from accounts where accountNumber = ?", (userAccountNumber,)).fetchone()
 
+    # Pay only the last billing period and update the account info
     cursor.execute("""
         update accounts set
             paidLastMonth = 'true',
@@ -52,13 +54,16 @@ def payOnlyLastMonth(userAccountNumber):
         where accountNumber = ?
     """, (paymentLastBillingPeriodFetch[0], userAccountNumber))
 
+    # Reset disconnectionDate if there is?
     # if user has a disconnectionDate, update it to N/A so that they don't get terminated
     cursor.execute("update readings set disconnectionDate = 'N/A' where accountNumber = ?", (userAccountNumber,))
 
     connection.commit()
 
+    # Check if all balances are cleared
     paymentStatusCheck = cursor.execute("select paymentLastBillingPeriod, paymentThisBillingPeriod, pendingBalance from accounts where accountNumber = ?", (userAccountNumber,)).fetchone()
 
+    # If fully paid, update the payment status
     if paymentStatusCheck[0] == 0 and paymentStatusCheck[1] == 0 and paymentStatusCheck[2] == 0:
         cursor.execute("update accounts set paymentStatus = 'paid' where accountNumber = ?", (userAccountNumber,))
     

@@ -7,7 +7,7 @@ from windowMain import mainMenu
 
 class loginWindow():
     def __init__(self):
-
+        # Connect to SQLite database
         self.connection = sqlite3.connect('database.s3db')
         self.cursor = self.connection.cursor()
 
@@ -19,6 +19,7 @@ class loginWindow():
         self.loginWindow.rowconfigure(2, weight = 1)
         self.loginWindow.columnconfigure(0, weight = 1)
 
+        # Frame to hold all main widgets
         self.widgetFrame = tk.Frame(self.loginWindow, bg = "#bbbbbb")
 
         self.widgetFrame.rowconfigure(0, weight = 1)
@@ -32,12 +33,15 @@ class loginWindow():
                 bg = "#bbbbbb",
                 anchor = "center").pack(fill = "x", pady = 10)
 
+        # Input boxes for account number and password
         self.accountNumberEntry = self.labelAndEntry(self.widgetFrame, True, "Enter account number:", 20, 5, 5)
         self.passwordEntry = self.labelAndEntry(self.widgetFrame, False, "Enter Password:", 20, 5, 5)
 
+        # Bind keyboard keys: Enter to submit, Escape to close window
         self.loginWindow.bind('<Return>', lambda event: self.login())
         self.loginWindow.bind('<Escape>', lambda event: self.loginWindow.destroy())
 
+        # Frame for login and create account buttons
         self.buttonFrame = tk.Frame(self.loginWindow, bg = "#bbbbbb")
 
         self.buttonFrame.rowconfigure(0, weight = 1)
@@ -45,6 +49,7 @@ class loginWindow():
 
         self.buttonFrame.grid(row = 1, column = 0, pady = 5)
 
+        # Button to create a new account
         tk.Button(self.buttonFrame,
                 text = "Create \nnew account?",
                 width = 15,
@@ -52,6 +57,7 @@ class loginWindow():
                 command = self.createAccountMenu,
                 bg = "#cccccc").grid(padx = 20, row = 0, column = 0, sticky = "ew")
 
+        # Button to login
         tk.Button(self.buttonFrame,
                 text = "Login",
                 width = 15,
@@ -59,6 +65,7 @@ class loginWindow():
                 command = self.login,
                 bg = "#cccccc").grid(padx = 20, row = 0, column = 1, sticky = "ew")
 
+        # Frame for help button
         self.helpFrame = tk.Frame(self.loginWindow, bg = "#bbbbbb")
 
         self.helpFrame.rowconfigure(0, weight = 1)
@@ -66,6 +73,7 @@ class loginWindow():
 
         self.helpFrame.grid(row = 2, column = 0, pady = 5)
 
+        # Help button
         self.helpButton = tk.Button(self.helpFrame,
                                     text = "Help?",
                                     width = 15,
@@ -101,20 +109,25 @@ class loginWindow():
                     messagebox.showinfo('Error!', errorTuple[1])
                     return
 
+            # Check if account exists in the database
             accountExists = self.cursor.execute("SELECT name, accountNumber, address, password FROM accounts WHERE accountNumber = ?", (accountNumber,)).fetchone()
 
+            # Pops if no matching account found
             if not accountExists:
                 messagebox.showinfo('Error!', 'That account does not exist!') ## ADDED
                 return 
 
+            # Password does not match the one on DB
             if password != accountExists[3]: ## ADDED
                 messagebox.showinfo('Error!', 'Incorrect password!') ## ADDED
                 return
 
+            # Login successful — close login window and open main menu
             self.loginWindow.destroy()
             mainMenu((accountExists))
 
         except Exception as e:
+            # Catch any unexpected errors
             messagebox.showinfo("Error!", "Error, please try again!")
             print(e)
 

@@ -5,7 +5,7 @@ from tkinter import messagebox
 
 import psutil
 
-
+# It checks if the script is already running, and if not, launches it.
 class subProcess:
     def __init__(self, scriptname):
         self.scriptname = scriptname
@@ -30,10 +30,12 @@ class subProcess:
        
             print(f"{self.scriptname} is running! PID: {process.pid}") # printing the PID is for debugging purposes
 
+        # If not on Windows, show an error and stop execution
         elif os.name != 'nt':
             messagebox.showinfo("error!", "you must be running on windows!")
             raise Exception
     
+        # If script is already running, just print its PID
         elif pid:
             print(f"{self.scriptname} is already running! PID: {pid}")
 

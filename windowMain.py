@@ -64,6 +64,7 @@ class mainMenu():
 
 
     def confirmExit(self, event=None):
+        # Confirm before exiting the app
         from loginWindow import loginWindow 
         if messagebox.askokcancel("Quit", "Do you really want to Exit?"):
             self.mainWindow.destroy()
@@ -88,6 +89,7 @@ class mainMenu():
     def mainPage(self):
         self.clearContent()
 
+        # Fetch user account and billing info
         accountsCheck = self.cursor.execute("select accountStatus, pendingBalance, paymentLastBillingPeriod, kWh from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
         disconnectionDateFetch = self.cursor.execute("select disconnectionDate from readings where accountNumber = ?", (self.accountNumber,)).fetchone()
 
@@ -99,6 +101,7 @@ class mainMenu():
         self.labelHelperFunction(tk.Label, self.contentFrame, self.username, 40, "#bbbbbb", 1, False)
         self.labelHelperFunction(tk.Label, self.contentFrame, f"Electricity meter: {accountsCheck[3]} kWh", 30, "#bbbbbb", 2, False)
 
+        # Account status checks and warnings
         if accountsCheck[0] == 'terminated':
             self.labelHelperFunction(tk.Label, self.contentFrame, "Your account has been closed!", 20, "#bbbbbb", 3, False)
             self.labelHelperFunction(tk.Label, self.contentFrame, f"Please pay the total balance: ₱{accountsCheck[1]:.2f}", 20, "#bbbbbb", 4, False)
@@ -135,6 +138,7 @@ class mainMenu():
 
         if balanceFetch[3] == 'unpaid' and balanceFetch[2]:
 
+            # Compute billing
             totalKwhUsage = readings[1] - readings[0]
 
             totalPaymentWithoutVat = totalKwhUsage * self.kWhRateFetch
@@ -180,6 +184,7 @@ class mainMenu():
             billBody.insert('15.0', f"Unpaid balance last billing period (Ignore if ₱0.00): ₱{balanceFetch[0]:.2f}\n\n")
             billBody.insert('17.0', f"TOTAL PENDING BALANCE: ₱{balanceFetch[2]:.2f}\n")
 
+            # Make text read-only?
             billBody.config(state='disabled')
         else:
             messagebox.showinfo(

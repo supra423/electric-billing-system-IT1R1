@@ -13,8 +13,8 @@ from subProcess import subProcess
 # GUMATAY, Nick Adrienne
 
 if __name__ == "__main__":
-    Database()
-    subProcess("kwh.py")
-    subProcess("billScript.py")
-    subProcess("ifUserPaid.py")
-    loginWindow()
+    Database()                      # Runs the database and create necessary tables if they don't exist
+    subProcess("kwh.py")            # Calculates kilowatt-hour consumption 
+    subProcess("billScript.py")     # Computes and stores billing amounts
+    subProcess("ifUserPaid.py")     # Checks and updates user payment status
+    loginWindow()                   # Launch the login window as the starting point of the application

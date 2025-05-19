@@ -8,23 +8,25 @@ from helpWindow import helpWindow
 class createAccount():
 
     def __init__(self):
-
+        # Connect to SQLite database file or create it if not exists
         self.connection = sqlite3.connect('database.s3db')
         self.cursor = self.connection.cursor()
 
+        # Setup the main window for account creation using Tkinter
         self.createAccountWindow = tk.Tk()
         self.createAccountWindow.title("Create an account")
         self.createAccountWindow.geometry("450x500")
-        self.createAccountWindow.resizable(False, False)
+        self.createAccountWindow.resizable(False, False) # Fix window size
         self.createAccountWindow.configure(bg = "#bbbbbb")
 
         self.createAccountWindow.columnconfigure(0, weight = 1)
         self.createAccountWindow.rowconfigure(1, weight = 1)
 
+        # Load installation fee configuration from JSON file
         try:
             with open('configs.json', 'r') as file:
                 data = json.load(file)
-                self.installationFeeFetch = float(data['installationFee'])
+                self.installationFeeFetch = float(data['installationFee']) # Store fee as float
 
         except FileNotFoundError:
             print("Error: JSON File not found!")
@@ -49,6 +51,7 @@ class createAccount():
         # initial payment for installation
         self.installationFee = self.labelAndEntry(self.widgetFrame, True, f"Installation fee\n(₱{self.installationFeeFetch:.2f}):", 20)
 
+        # Bind keyboard keys: Enter to submit, Escape to close window
         self.createAccountWindow.bind('<Return>', lambda event: self.insertNewAccount())
         self.createAccountWindow.bind('<Escape>', lambda event: self.createAccountWindow.destroy())
 
@@ -60,6 +63,7 @@ class createAccount():
 
         self.buttonFrame.grid(row = 1, column = 0, pady = 5)
 
+        # Help button to open help window
         self.helpButton = tk.Button(self.buttonFrame,
                                     text = "Help?",
                                     width = 12,
@@ -68,6 +72,7 @@ class createAccount():
                                     command = self.helpButtonCommand)
         self.helpButton.grid(row = 0, column = 0, padx = 60, pady = 10)
 
+        # Button to create a new account
         self.newAccountButton = tk.Button(self.buttonFrame, 
                 text = "Create \nnew account", 
                 width = 12, 
@@ -77,10 +82,12 @@ class createAccount():
 
         self.newAccountButton.grid(row = 0, column = 1, padx = 60, pady = 10)
 
+        # Start the GUI event loop
         self.createAccountWindow.mainloop()
 
     def insertNewAccount(self):
         try:
+            # Get all user input, strip extra whitespace
             newName = self.newNameEntry.get().strip()
             newAccountNumber = self.newAccountNumberEntry.get().strip().replace(" ", "")
             newHomeAddress = self.newHomeAddressEntry.get().strip()
@@ -102,18 +109,21 @@ class createAccount():
             for errorTuple in emptyEntryMessages:
                 if not errorTuple[0]:
                     messagebox.showinfo('Error!', errorTuple[1])
-                    return 
+                    return # Stop function if any input is empty
 
+            # Check that password and confirmation match
             if newPassword != newPasswordConfirm:
                 messagebox.showinfo('Error!', 'Password confirmation is incorrect!')
                 return
 
+            # Check if the account number already exists in the database
             accountFetch = self.cursor.execute("select accountNumber from accounts where accountNumber = ?",
                                                     (newAccountNumber,)).fetchone()
             if accountFetch:
                 messagebox.showinfo('Error!', 'That account already exists!')
                 return
-
+            
+            # Validate account number length and numeric-only characters
             if len(newAccountNumber) != 16:
                 messagebox.showinfo('Error!', 'Account number must be 16-digits')
                 return
@@ -127,18 +137,23 @@ class createAccount():
             if installationFee < self.installationFeeFetch:
                 messagebox.showinfo("Invalid payment!", "Please pay the proper amount!")
                 return
+            # Inform user if they overpaid and provide change
             elif installationFee > self.installationFeeFetch:
                 messagebox.showinfo("Change", f"Here is your change: {installationFee - self.installationFeeFetch:.2f}")
 
+            # Insert new account data into database tables
             self.cursor.execute("insert into accounts(name, accountNumber, password, address) values(?, ?, ?, ?)", 
                                 (newName, newAccountNumber, newPassword, newHomeAddress))
 
+            #Create notifications and readings with the new account number
             self.cursor.execute("insert into notifications(accountNumber) values(?)", (newAccountNumber,))
 
             self.cursor.execute("insert into readings(accountNumber) values(?)", (newAccountNumber,))
 
+            # Save changes to the database
             self.connection.commit()
 
+            # Notify user of successful registration and close the window
             messagebox.showinfo("Thank you!", "Thank you for joining EPALCO!")
             self.createAccountWindow.destroy()
 
@@ -147,6 +162,7 @@ class createAccount():
             print(e)
 
     def helpButtonCommand(self):
+        # Open the help window related to account creation
         helpWindow("createAccount")
 
     def labelAndEntry(self, whichWindow, showEntry, labelText, fontSize):
@@ -171,7 +187,7 @@ class createAccount():
             newEntry = tk.Entry(whichWindow,
                                 width = 20,
                                 font = ("Arial", 12),
-                                show = "*",
+                                show = "*", # hides input for passwords
                                 bg = "#eeeeee")
 
         newEntry.grid(column = 0)
