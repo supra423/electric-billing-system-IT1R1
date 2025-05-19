@@ -58,7 +58,7 @@ def job2():
     connection = sqlite3.connect('database.s3db')
     cursor = connection.cursor()
 
-   # example, sampleRow = ('May 30, 2025,')
+    # example, sampleRow = ('May 30, 2025,')
     # fetch a row to determine the due date of the current payment period
     sampleRow = cursor.execute("select dueDate from readings where dueDate != 'N/A'").fetchone()
     currentDatetime = datetime.now().strftime("%B %d, %Y")
