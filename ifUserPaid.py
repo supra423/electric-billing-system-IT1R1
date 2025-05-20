@@ -123,10 +123,10 @@ def job3():
     if sampleRow[0] != currentDatetime:
         return
 
-    # Fetch all niggaz marked 'almost terminated'
+    # Fetch all users marked 'almost terminated'
     accountFetch = cursor.execute("select accountNumber from accounts where accountStatus = 'almost terminated'").fetchall()
 
-    # Mark these niggaz as 'terminated' (account freeze?)
+    # Mark these users as 'terminated' (account freeze?)
     for row in accountFetch:
         accountTermination = cursor.execute("update accounts set accountStatus = 'terminated' where accountNumber = ?", (row[0],))
 

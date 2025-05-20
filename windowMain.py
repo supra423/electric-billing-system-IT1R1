@@ -194,7 +194,7 @@ class mainMenu():
         self.bellIconSwitch()
 
     def pay(self):
-        self.balance = self.cursor.execute("select pendingBalance, paymentLastBillingPeriod from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
+        self.balance = self.cursor.execute("select pendingBalance, paymentLastBillingPeriod, accountStatus from accounts where accountNumber = ?", (self.accountNumber,)).fetchone()
         self.clearContent()
 
         if self.balance[0] > 0:
@@ -202,7 +202,10 @@ class mainMenu():
             self.labelHelperFunction(tk.Label, self.contentFrame, "Pay Page", 24, "#bbbbbb", 0, False)
             self.labelHelperFunction(tk.Label, self.contentFrame, "You have two options when paying:", 20, "#bbbbbb", 1, False)
             self.labelHelperFunction(tk.Label, self.contentFrame, f"Pay all pending balance: ₱{self.balance[0]:.2f}", 20, "#bbbbbb", 2, False)
-            self.labelHelperFunction(tk.Button, self.contentFrame, "Pay all pending balance", 14, "#ababab", 3, True, lambda: self.buttonPayAllFunction("Pay All"))
+
+            if self.balance[2] != 'terminated':
+                self.labelHelperFunction(tk.Button, self.contentFrame, "Pay all pending balance", 14, "#ababab", 3, True, lambda: self.buttonPayAllFunction("Pay All"))
+
             self.labelHelperFunction(tk.Label, self.contentFrame, f"Pay only last month's bill (Ignore if ₱0.00): ₱{self.balance[1]:.2f}", 20, "#bbbbbb", 4, False)
             self.labelHelperFunction(tk.Button, self.contentFrame, "Pay only last month's bill", 14, "#ababab", 5, True, lambda: self.buttonPayOnlyFunction("Pay Only Last Month"))
 
