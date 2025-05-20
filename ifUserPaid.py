@@ -28,25 +28,34 @@ these functions basically run everyday trying to check if it is the due date or 
 '''
 
 def job1():
+    
     connection = sqlite3.connect('database.s3db')
     cursor = connection.cursor()
    
+    # Fetch one reading with a valid due date (not 'N/A')
     sampleRow = cursor.execute("select dueDate from readings where dueDate != 'N/A'").fetchone()
 
+    # If no due date found, exit
     if sampleRow is None:
         return
 
+    # Due date string into a datetime object
     dateObject = datetime.strptime(sampleRow[0], "%B %d, %Y")
     currentDatetime = datetime.now().strftime("%B %d, %Y")
 
+     # Calculate the disconnection date (3 days after due date)
     newDate = dateObject + timedelta(days = 3)
     newDateFormatted = newDate.strftime("%B %d, %Y")
  
+    # If today is not the due date, do nothing
     if sampleRow[0] != currentDatetime:
         return
 
+    """     Get accounts that are unpaid, have unpaid balance from last month,
+            unpaid this billing period, and were marked as not paid last month     """
     accountFetch = cursor.execute("select accountNumber from accounts where paymentStatus = 'unpaid' AND paymentLastBillingPeriod != 0 AND paymentThisBillingPeriod != 0 AND paidLastMonth = 'false'").fetchall()
 
+    # For each account found, mark as 'almost terminated' and set disconnection date
     for row in accountFetch:
 
         accountAlmostTermination = cursor.execute("update accounts set accountStatus = 'almost terminated' where accountNumber = ?", (row[0],))
@@ -58,6 +67,7 @@ def job2():
     connection = sqlite3.connect('database.s3db')
     cursor = connection.cursor()
 
+    # Fetch one reading with a valid due date
     # example, sampleRow = ('May 30, 2025,')
     # fetch a row to determine the due date of the current payment period
     sampleRow = cursor.execute("select dueDate from readings where dueDate != 'N/A'").fetchone()
@@ -84,6 +94,7 @@ def job2():
         if userPaymentStatusAndPayment[0] == 'unpaid' and userPaymentStatusAndPayment[3] == 'true':
 
             cursor.execute("update accounts set paymentLastBillingPeriod = paymentLastBillingPeriod + ? where accountNumber = ?", (userPaymentStatusAndPayment[1], row[0])) 
+            # Reset current billing amount since it's added to last billing period balance
             cursor.execute("update accounts set paymentThisBillingPeriod = 0 where paymentStatus = ? AND accountNumber = ?", (userPaymentStatusAndPayment[0], row[0]))
             cursor.execute("update accounts set paidLastMonth = 'false' where paymentStatus = ? AND accountNumber = ?", (userPaymentStatusAndPayment[0], row[0]))
 
@@ -93,8 +104,10 @@ def job3():
     connection = sqlite3.connect('database.s3db')
     cursor = connection.cursor()
 
+    # Fetch one reading with a valid disconnection date
     sampleRow = cursor.execute("select disconnectionDate from readings where disconnectionDate != 'N/A'").fetchone()
 
+    # If no disconnection date found, exit
     if sampleRow is None:
         return
 
@@ -105,12 +118,15 @@ def job3():
     # if there are no rows that contain a disconnection date
     currentDatetime = datetime.now().strftime("%B %d, %Y")
 
+    # Only proceed if today is the disconnection date
     # if today is not disconnection date
     if sampleRow[0] != currentDatetime:
         return
 
+    # Fetch all niggaz marked 'almost terminated'
     accountFetch = cursor.execute("select accountNumber from accounts where accountStatus = 'almost terminated'").fetchall()
 
+    # Mark these niggaz as 'terminated' (account freeze?)
     for row in accountFetch:
         accountTermination = cursor.execute("update accounts set accountStatus = 'terminated' where accountNumber = ?", (row[0],))
 

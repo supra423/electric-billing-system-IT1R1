@@ -2,6 +2,11 @@ import tkinter as tk
 from tkinter import messagebox
 
 class helpWindow():
+    """
+    Creates a help window with text content
+    (e.g., login, account creation).
+    The help text is loaded from external text files (helpLoginWindowText.txt).
+    """
     def __init__(self, whichWindow):
 
         self.whichWindow = whichWindow
